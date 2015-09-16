@@ -1,0 +1,9 @@
+<div ng-controller="interstellar-simple.LoginController as login">
+  <form ng-submit="login.submit()">
+    <interstellar-ui-messages-alerts group="login.alerts"></interstellar-ui-messages-alerts>
+    Secret:
+    <input type="password" ng-model="login.secret" />
+    <br />
+    <button type="submit">Login</button>
+  </form>
+</div>

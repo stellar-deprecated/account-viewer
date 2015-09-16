@@ -1,0 +1,23 @@
+{
+  "name": "interstellar-simple-client",
+  "version": "0.0.1",
+  "private": true,
+  "description": "The stellar.org modular client",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "author": "Stellar Development Foundation <stellar@stellar.org>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/stellar/interstellar-client.git"
+  },
+  "dependencies": {
+    "interstellar-core": "~0.0.2",
+    "interstellar-sessions": "~0.0.4",
+    "interstellar-network": "~0.0.8",
+    "interstellar-network-widgets": "~0.0.11",
+    "interstellar-ui-messages": "~0.0.2",
+    "stellar-base": "~0.4.2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "modules": {
+    "interstellar-network": {
+      "horizon": {
+        "secure": true,
+        "hostname": "horizon-testnet.stellar.org",
+        "port": 443
+      }
+    }
+  }
+}
