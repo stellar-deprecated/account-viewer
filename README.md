@@ -1,4 +1,4 @@
-# interstellar-simple-client
+# interstellar-basic-client
 
 1. `npm install`
 1. `npm install -g interstellar`
