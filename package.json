@@ -13,11 +13,11 @@
     "url": "http://github.com/stellar/interstellar-client.git"
   },
   "dependencies": {
-    "interstellar-core": "~0.0.2",
-    "interstellar-sessions": "~0.0.4",
-    "interstellar-network": "~0.0.8",
-    "interstellar-network-widgets": "~0.0.11",
+    "interstellar-core": "~0.0.3",
+    "interstellar-sessions": "~0.0.6",
+    "interstellar-network": "~0.0.9",
+    "interstellar-network-widgets": "~0.0.12",
     "interstellar-ui-messages": "~0.0.2",
-    "stellar-base": "~0.4.2"
+    "stellar-base": "~0.4.7"
   }
 }
