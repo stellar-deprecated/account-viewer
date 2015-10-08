@@ -1,9 +1,24 @@
-<div ng-controller="interstellar-simple.LoginController as login">
-  <form ng-submit="login.submit()">
-    <interstellar-ui-messages-alerts group="login.alerts"></interstellar-ui-messages-alerts>
-    Secret:
-    <input type="password" ng-model="login.secret" />
-    <br />
-    <button type="submit">Login</button>
-  </form>
+<div class="so-back">
+  <div class="so-chunk">
+    <div class="so-siteHeader siteHeader">
+      <span class="so-logo">
+        <a href="https://www.stellar.org/" class="so-logo__main">Stellar</a><!--
+        --><span class="so-logo__separator"> </span><!--
+        --><a class="so-logo__subSite">basic client</a>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="so-back">
+  <div ng-controller="interstellar-simple.LoginController as login" class="so-chunk">
+    <form ng-submit="login.submit()" class="loginBox">
+      <interstellar-ui-messages-alerts group="login.alerts"></interstellar-ui-messages-alerts>
+      <p class="loginBox__label">Secret:</p>
+      <input type="password" ng-model="login.secret" class="loginBox__input" placeholder="Example: SCHKBJ............ZLJ7" />
+      <div class="s-alert s-alert--alert">Invalid secret key. (this is just an example of errors)</div>
+      <div class="s-alert s-alert--alert">Invalid secret key.<br><br>You entered a secret key for the old network. Secret keys for the new network are uppercase and begins with the letter "S".</div>
+      <button type="submit" class="s-button loginBox__submit">Login</button>
+    </form>
+  </div>
 </div>

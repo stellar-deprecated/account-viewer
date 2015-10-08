@@ -1,2 +1,211 @@
 @import "solar-css/lib/index";
 @import "solar-css/styles/index";
+
+@import "solar-stellarorg/lib/index";
+@import "solar-stellarorg/styles/index";
+
+.siteHeader {
+  justify-content: space-between;
+}
+.siteHeader__signout {
+  @include S-flexItem-full;
+  @include r-media(m) {
+    @include S-flexItem-noFlex;
+  }
+}
+.siteHeader__signout__link:hover {
+  color: $s-color-primary3;
+}
+
+
+.loginBox {
+  max-width: 25em;
+  padding: 2em;
+  border: 1px solid $s-color-primary8;
+  background: $s-color-primary9;
+}
+  .loginBox__label {
+    margin-bottom: 0;
+  }
+  .loginBox__input {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+  }
+  .loginBox__submit {
+    padding-left: 5em;
+    padding-right: 5em;
+  }
+
+
+.dashboardOverviewBack {
+  padding-top: 2em;
+  padding-bottom: 2em;
+  border-top: 1px solid $s-color-light2;
+  border-bottom: 1px solid $s-color-light2;
+  background: $s-color-light3;
+}
+
+.dashboardOverviewRow {
+  margin-bottom: 1em;
+}
+.dashboardOverviewRow:last-child {
+  margin-bottom: 0;
+}
+  .dashboardOverviewRow__label {
+    margin-bottom: 0;
+  }
+  .dashboardOverviewRow__text {
+    font-size: $s-scale-2;
+    word-wrap: break-word;
+    word-break: break-word;
+    margin-bottom: 0;
+    @include r-media(m) {
+      font-size: $s-scale-1;
+    }
+  }
+
+.sendPane {
+  padding: 2em 0;
+}
+  .sendPane__title {
+    margin-bottom: 1em;
+  }
+  .sendPane__submit {
+    padding-left: 5em;
+    padding-right: 5em;
+  }
+
+.sendSetup {
+}
+  .sendSetup__destination {
+    margin-bottom: 1em;
+  }
+  .sendSetup__destination__input {
+    width: 100%;
+  }
+
+  .sendSetup__amount {
+    @include S-flex-row;
+    margin-bottom: 1em;
+  }
+  .sendSetup__amount__input {
+    @include S-flexItem-share;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    @include r-media(m) {
+      font-size: $s-scale-2;
+    }
+  }
+  .sendSetup__amount__tag {
+    display: flex;
+    align-items: center;
+
+    @include S-flexItem-noFlex;
+    border: 1px solid $s-color-light1;
+    border-left: none;
+
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 0 1em;
+    background: $s-color-light3;
+  }
+  .sendSetup__error {
+    margin-top: -0.5em;
+    margin-bottom: 1em;
+  }
+
+  .sendSetup__submit {
+    width: 100%;
+
+    @include r-media(s) {
+      width: auto;
+      padding-left: 4em;
+      padding-right: 4em;
+    }
+  }
+
+
+.sendSetup, .sendConfirm, .sendWaiting, .sendOutcome {
+  max-width: 36em;
+  margin: 0 auto 3em 0;
+}
+.sendConfirm, .sendWaiting, .sendOutcome {
+  margin: 0 auto 3em auto;
+}
+
+
+.sendConfirm {
+}
+  .sendConfirm__addressLabel {
+    text-align: center;
+    font-size: $s-scale-5;
+    margin-bottom: 0em;
+  }
+  .sendConfirm__address {
+    padding: 0 2em;
+    font-size: $s-scale-3;
+    text-align: center;
+    word-break: break-all;
+    font-weight: bold;
+  }
+  .sendConfirm__sendingContainer {
+    @include S-flex-row;
+    margin-bottom: 2em;
+    background: $s-color-light3;
+  }
+    .sendConfirm__sendingContainer__label {
+      @include S-flex-row;
+      @include S-flexItem-1of3;
+      align-items: center;
+      padding-left: 2em;
+    }
+    .sendConfirm__sendingContainer__amount {
+      @include S-flexItem-share;
+      padding: 1.5em 1em;
+    }
+      .sendConfirm__sendingContainer__amount__number {
+        font-size: $s-scale-1;
+        font-weight: bold;
+        line-height: 1;
+        word-wrap: break-word;
+        word-break: break-word;
+      }
+      .sendConfirm__sendingContainer__amount__type {
+        font-size: $s-scale-4;
+      }
+  .sendConfirm__submit {
+    width: 100%;
+    font-size: $s-scale-2;
+    margin-bottom: 1em;
+  }
+  .sendConfirm__edit {
+    display: block;
+    text-align: center;
+  }
+
+.sendWaiting {
+}
+  .sendWaiting__rocket {
+    padding: 3em 0;
+    text-align: center;
+  }
+  .sendWaiting__status {
+    text-align: center;
+    font-size: $s-scale-3;
+  }
+
+.sendOutcome {
+}
+  .sendOutcome__label {
+    text-align: center;
+    font-size: $s-scale-3;
+  }
+  .sendOutcome__code {
+    background: $s-color-light3;
+    padding: 1em;
+  }
+  .sendOutcome__return {
+    display: block;
+    margin: 0 auto;
+  }
