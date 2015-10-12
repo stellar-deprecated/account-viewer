@@ -23,7 +23,7 @@
         </span>
       </div>
 
-      <button type="submit" class="s-button loginBox__submit">Login</button>
+      <button type="submit" class="s-button loginBox__submit" ng-class="{'is-disabled': login.processing}" ng-disabled="login.processing">Login</button>
     </form>
   </div>
 </div>

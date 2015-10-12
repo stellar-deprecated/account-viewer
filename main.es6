@@ -8,7 +8,12 @@ import interstellarNetwork from "interstellar-network";
 import interstellarSessions from "interstellar-sessions";
 import interstellarUiMessages from "interstellar-ui-messages";
 
-let config = require('./config.json');
+let config;
+if (INTERSTELLAR_ENV === 'prd') {
+  config = require('./config-prd.json');
+} else {
+  config = require('./config.json');
+}
 const app = new App("interstellar-basic-client", config);
 
 app.use(interstellarCore);

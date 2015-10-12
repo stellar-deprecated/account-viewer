@@ -4,10 +4,11 @@ import {Keypair} from 'stellar-base';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
 
 @Controller("LoginController")
-@Inject("$scope", "interstellar-core.IntentBroadcast", "interstellar-sessions.Sessions", "interstellar-ui-messages.Alerts")
+@Inject("$scope", "interstellar-core.Config", "interstellar-core.IntentBroadcast", "interstellar-sessions.Sessions", "interstellar-ui-messages.Alerts")
 export default class LoginController {
-  constructor($scope, IntentBroadcast, Sessions, Alerts) {
+  constructor($scope, Config, IntentBroadcast, Sessions, Alerts) {
     this.$scope = $scope;
+    this.Config = Config;
     this.IntentBroadcast = IntentBroadcast;
     this.Sessions = Sessions;
 
@@ -32,18 +33,21 @@ export default class LoginController {
 
   submit() {
     this.alertGroup.clear();
-    let secret  = this.secret;
+    this.processing = true;
+    let secret = this.secret;
     try {
       let keypair = Keypair.fromSeed(secret);
       let address = keypair.address();
-      this.Sessions.createDefault({address, secret, permanent: true})
+      let permanent = this.Config.get("permanentSession");
+      this.Sessions.createDefault({address, secret, permanent})
         .then(() => {
           this.broadcastShowDashboardIntent();
         });
     } catch(e) {
+      this.processing = false;
       let alert = new Alert({
         title: 'Invalid secret key',
-        text: 'You entered a secret key for the old network. Secret keys for the new network are uppercase and begins with the letter "S".',
+        text: 'Secret keys for the new network are uppercase and begins with the letter "S".',
         type: Alert.TYPES.ERROR,
         dismissible: false // default true
       });
