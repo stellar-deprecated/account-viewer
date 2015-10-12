@@ -10,14 +10,14 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "http://github.com/stellar/interstellar-client.git"
+    "url": "http://github.com/stellar/interstellar-basic-client.git"
   },
   "dependencies": {
     "interstellar-core": "~0.0.3",
+    "interstellar-network": "~0.0.10",
     "interstellar-sessions": "~0.0.6",
-    "interstellar-network": "~0.0.9",
-    "interstellar-network-widgets": "~0.0.12",
     "interstellar-ui-messages": "~0.0.2",
-    "stellar-base": "~0.4.7"
+    "lodash": "^3.10.1",
+    "stellar-base": "~0.4.9"
   }
 }

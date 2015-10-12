@@ -15,8 +15,11 @@ export default class LoginController {
       this.broadcastShowDashboardIntent();
     }
 
-    this.alerts = new AlertGroup();
-    Alerts.registerGroup(this.alerts);
+    this.alertGroup = new AlertGroup();
+    this.alertGroup.registerUpdateListener(alerts => {
+      this.alerts = alerts;
+    });
+    Alerts.registerGroup(this.alertGroup);
   }
 
   broadcastShowDashboardIntent() {
@@ -28,23 +31,23 @@ export default class LoginController {
   }
 
   submit() {
-    this.alerts.clear();
+    this.alertGroup.clear();
     let secret  = this.secret;
     try {
       let keypair = Keypair.fromSeed(secret);
       let address = keypair.address();
-      this.Sessions.createDefault({address, secret})
+      this.Sessions.createDefault({address, secret, permanent: true})
         .then(() => {
           this.broadcastShowDashboardIntent();
         });
     } catch(e) {
       let alert = new Alert({
-        title: 'Secret is invalid',
-        text: 'Make sure you are using a correct secret to login.',
+        title: 'Invalid secret key',
+        text: 'You entered a secret key for the old network. Secret keys for the new network are uppercase and begins with the letter "S".',
         type: Alert.TYPES.ERROR,
         dismissible: false // default true
       });
-      this.alerts.show(alert);
+      this.alertGroup.show(alert);
     }
   }
 }

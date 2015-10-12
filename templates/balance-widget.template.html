@@ -1,0 +1,12 @@
+<div class="so-back dashboardOverviewBack" ng-controller="interstellar-basic-client.BalanceWidgetController as widget">
+  <div class="so-chunk">
+    <div class="dashboardOverviewRow" ng-if="widget.balanceLoaded">
+      <p class="dashboardOverviewRow__label">Your balance:</p>
+      <p class="dashboardOverviewRow__text">{{widget.balance}} lumens</p>
+    </div>
+    <div class="dashboardOverviewRow">
+      <p class="dashboardOverviewRow__label">Your Stellar address:</p>
+      <p class="dashboardOverviewRow__text">{{widget.address}}</p>
+    </div>
+  </div>
+</div>

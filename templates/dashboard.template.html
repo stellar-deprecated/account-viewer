@@ -1,5 +1,4 @@
-<interstellar-ui-messages-toast></interstellar-ui-messages-toast>
-<div class="so-back">
+<div class="so-back" ng-controller="interstellar-basic-client.HeaderController as header">
   <div class="so-chunk">
     <div class="so-siteHeader siteHeader">
       <span class="so-logo">
@@ -7,86 +6,15 @@
         --><span class="so-logo__separator"> </span><!--
         --><a href="basic client" class="so-logo__subSite">basic client</a>
       </span>
-      <span class="so-siteHeader__simpleAlign siteHeader__signout"><a href="#check" class="siteHeader__signout__link">Sign out</a></span>
+      <span class="so-siteHeader__simpleAlign siteHeader__signout"><a href="#" ng-click="header.logout()" class="siteHeader__signout__link">Sign out</a></span>
     </div>
   </div>
 </div>
 
-<div class="so-back dashboardOverviewBack">
-  <div class="so-chunk">
-    <div class="dashboardOverviewRow">
-      <p class="dashboardOverviewRow__label">Your balance:</p>
-      <p class="dashboardOverviewRow__text">2799999.9996000 lumens</p>
-    </div>
-    <div class="dashboardOverviewRow">
-      <p class="dashboardOverviewRow__label">Your Stellar address:</p>
-      <p class="dashboardOverviewRow__text">GAAAAAAAAAAAAAAXKKEIXF4DN6PXKIHBYC323GVC2VGN2XLTOQF3WHA7</p>
-    </div>
-  </div>
-</div>
+<interstellar-basic-client-balance></interstellar-basic-client-balance>
 
 <div class="so-back">
   <div class="so-chunk">
-    <div class="sendPane">
-      <h2 class="sendPane__title">Send</h2>
-      <div class="sendSetup">
-        <div class="sendSetup__destination">
-          <input class="sendSetup__destination__input s-inputAlert--alert" placeholder="Address to send to" type="text">
-        </div>
-        <div class="s-alert s-alert--alert sendSetup__error">Invalid address. You entered an address for the old network. Addresses on the new network are uppercase and begin with the letter "G".</div>
-
-        <div class="s-inputGroup sendSetup__amount">
-          <input class="s-inputGroup__item sendSetup__amount__input  s-inputAlert--alert" type="text" placeholder="Amount of lumens to send">
-          <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__amount__tag">
-            lumens
-          </span>
-        </div>
-        <div class="s-alert s-alert--alert sendSetup__error">Insufficient balance. Sending this transaction will cause you to go below your <a href="https://www.stellar.org/developers/learn/concepts/fees.html#minimum-balance">minimum balance</a>. The most you can currently send is 140.573566. Another error message is when amount is more than balance. it'll have an alert with different wording (but don't worry about it for now).</div>
-
-        <button class="s-button sendSetup__submit"type="submit">Send</button>
-        <button class="s-button sendSetup__submit is-disabled" disabled="disabled" type="submit">Send (disabled example)</button>
-      </div>
-
-      <div class="sendConfirm">
-        <p class="sendConfirm__addressLabel">You are sending to this address:</p>
-        <p class="sendConfirm__address">GBBBBBBBBBBBBBBBBBBY47PRRKYI3K3JFPFR322RRVNGAPHBWX2FUVKJ</p>
-
-        <div class="sendConfirm__sendingContainer">
-          <div class="sendConfirm__sendingContainer__label">Sending</div>
-          <div class="sendConfirm__sendingContainer__amount">
-            <span class="sendConfirm__sendingContainer__amount__number">1300000.1234567</span>
-            <br>
-            <span class="sendConfirm__sendingContainer__amount__type">lumens</span>
-          </div>
-        </div>
-
-        <button class="s-button sendConfirm__submit">Confirm transaction</button>
-
-        <a href="" class="sendConfirm__edit">← Change</a>
-      </div>
-
-      <div class="sendWaiting">
-        <div class="sendWaiting__rocket"><span style="font-size: 4em">🚀</span></div>
-        <p class="sendWaiting__status">Submitting transaction to the network</p>
-        <p class="sendWaiting__status">Waiting for transaction to be confirmed in consensus<p>
-      </div>
-
-      <div class="sendOutcome">
-        <div show-this-div-on-success>
-          <p class="sendOutcome__label">Transaction successfully completed</p>
-        </div>
-        <div show-this-div-on-success>
-          <p class="sendOutcome__label">Transaction failed</p>
-
-          <pre class="sendOutcome__code"><code>{
-  "error": "past sequence error",
-  "this is just a demo ...": true,
-  "it should show whever error we can conveniently get out of js-stellar-sdk": true
-}</code></pre>
-        </div>
-
-        <button class="s-button sendOutcome__return">Send another transaction</button>
-      </div>
-    </div>
+    <interstellar-basic-client-send></interstellar-basic-client-send>
   </div>
 </div>

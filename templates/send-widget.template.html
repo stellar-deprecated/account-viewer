@@ -1,0 +1,64 @@
+<div class="sendPane" ng-controller="interstellar-basic-client.SendWidgetController as widget">
+  <h2 class="sendPane__title">Send</h2>
+  <div class="sendSetup" ng-if="widget.view == 'sendSetup'">
+    <div class="sendSetup__destination">
+      <input ng-model="widget.destinationAddress" class="sendSetup__destination__input" ng-class="{'s-inputAlert--alert': widget.addressAlerts.length > 0}" placeholder="Address to send to" type="text">
+    </div>
+    <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.addressAlerts.length > 0">
+      <span ng-repeat="alert in widget.addressAlerts">
+        {{alert.title}} {{alert.text}}
+      </span>
+    </div>
+
+    <div class="s-inputGroup sendSetup__amount">
+      <input ng-model="widget.amount" class="s-inputGroup__item sendSetup__amount__input" ng-class="{'s-inputAlert--alert': widget.amountAlerts.length > 0}" type="text" placeholder="Amount of lumens to send">
+          <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__amount__tag">
+            lumens
+          </span>
+    </div>
+    <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.amountAlerts.length > 0">
+      <span ng-repeat="alert in widget.amountAlerts">
+        {{alert.title}} {{alert.text}}
+      </span>
+    </div>
+
+    <button class="s-button sendSetup__submit" ng-class="{'is-disabled': widget.sending}" ng-disabled="widget.sending" type="submit" ng-click="widget.send()">Send</button>
+  </div>
+
+  <div class="sendConfirm" ng-if="widget.view == 'sendConfirm'">
+    <p class="sendConfirm__addressLabel">You are sending to this address:</p>
+    <p class="sendConfirm__address">{{widget.destinationAddress}}</p>
+
+    <div class="sendConfirm__sendingContainer">
+      <div class="sendConfirm__sendingContainer__label">Sending</div>
+      <div class="sendConfirm__sendingContainer__amount">
+        <span class="sendConfirm__sendingContainer__amount__number">{{widget.amount}}</span>
+        <br>
+        <span class="sendConfirm__sendingContainer__amount__type">lumens</span>
+      </div>
+    </div>
+
+    <button class="s-button sendConfirm__submit" ng-click="widget.confirm()">Confirm transaction</button>
+
+    <a href="#" class="sendConfirm__edit" ng-click="widget.showView('sendSetup')">← Change</a>
+  </div>
+
+  <div class="sendWaiting" ng-if="widget.view == 'sendWaiting'">
+    <div class="sendWaiting__rocket"><span style="font-size: 4em">🚀</span></div>
+    <p class="sendWaiting__status">Submitting transaction to the network</p>
+    <p class="sendWaiting__status">Waiting for transaction to be confirmed in consensus<p>
+  </div>
+
+  <div class="sendOutcome" ng-if="widget.view == 'sendOutcome'">
+    <div ng-if="widget.success">
+      <p class="sendOutcome__label">Transaction successfully completed</p>
+    </div>
+    <div ng-if="!widget.success">
+      <p class="sendOutcome__label">Transaction failed</p>
+
+      <pre class="sendOutcome__code"><code>{{widget.horizonResponse}}</code></pre>
+    </div>
+
+    <button class="s-button sendOutcome__return" ng-click="widget.showView('sendSetup')">Send another transaction</button>
+  </div>
+</div>

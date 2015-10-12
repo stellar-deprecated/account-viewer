@@ -5,16 +5,14 @@ require('./styles/main.footer.scss');
 
 import interstellarCore, {App, Intent} from "interstellar-core";
 import interstellarNetwork from "interstellar-network";
-import interstellarNetworkWidgets from "interstellar-network-widgets";
 import interstellarSessions from "interstellar-sessions";
 import interstellarUiMessages from "interstellar-ui-messages";
 
 let config = require('./config.json');
-const app = new App("interstellar-simple", config);
+const app = new App("interstellar-basic-client", config);
 
 app.use(interstellarCore);
 app.use(interstellarNetwork);
-app.use(interstellarNetworkWidgets);
 app.use(interstellarSessions);
 app.use(interstellarUiMessages);
 
@@ -24,11 +22,11 @@ app.controllers = require.context("./controllers",   true);
 app.routes = ($stateProvider) => {
   $stateProvider.state('login', {
     url: "/",
-    templateUrl: "interstellar-simple/login"
+    templateUrl: "interstellar-basic-client/login"
   });
   $stateProvider.state('dashboard', {
     url: "/dashboard",
-    templateUrl: "interstellar-simple/dashboard",
+    templateUrl: "interstellar-basic-client/dashboard",
     requireSession: true
   });
 };
