@@ -18,7 +18,7 @@
     </div>
     <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.amountAlerts.length > 0">
       <span ng-repeat="alert in widget.amountAlerts">
-        {{alert.title}} {{alert.text}}
+        {{alert.title}} <span ng-bind-html="alert.text"></span>
       </span>
     </div>
 

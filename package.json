@@ -13,10 +13,11 @@
     "url": "http://github.com/stellar/interstellar-basic-client.git"
   },
   "dependencies": {
+    "bignumber.js": "^2.0.8",
     "interstellar-core": "~0.0.4",
     "interstellar-network": "~0.0.10",
     "interstellar-sessions": "~0.0.6",
-    "interstellar-ui-messages": "~0.0.2",
+    "interstellar-ui-messages": "~0.0.3",
     "lodash": "^3.10.1",
     "stellar-base": "~0.4.9"
   },
