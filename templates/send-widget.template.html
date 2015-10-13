@@ -44,7 +44,9 @@
   </div>
 
   <div class="sendWaiting" ng-if="widget.view == 'sendWaiting'">
-    <div class="sendWaiting__rocket"><span style="font-size: 4em">🚀</span></div>
+    <div class="sendWaiting__rocket">
+      <img ng-src="{{widget.rocketImage}}" alt="Sending..." />
+    </div>
     <p class="sendWaiting__status">Submitting transaction to the network</p>
     <p class="sendWaiting__status">Waiting for transaction to be confirmed in consensus<p>
   </div>

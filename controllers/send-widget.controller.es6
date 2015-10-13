@@ -16,6 +16,7 @@ export default class SendWidgetController {
     this.Server = Server;
     this.Sessions = Sessions;
     this.session = Sessions.default;
+    this.rocketImage = require('../images/sending.gif');
 
     this.addressAlertGroup = new AlertGroup();
     this.addressAlertGroup.registerUpdateListener(alerts => {
