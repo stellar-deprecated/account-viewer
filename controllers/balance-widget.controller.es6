@@ -1,4 +1,5 @@
 import {Widget, Inject} from 'interstellar-core';
+import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')
@@ -22,16 +23,18 @@ export default class BalanceWidgetController {
   }
 
   onBalanceChange(balances) {
+    let balance;
     if (_.isArray(balances) && balances.length > 0) {
       let nativeBalance = _(balances).find(balance => balance.asset_type === 'native');
       if (nativeBalance) {
-        this.balance = nativeBalance.balance;
+        balance = nativeBalance.balance;
       } else {
-        this.balance = 0;
+        balance = 0;
       }
     } else {
-      this.balance = 0;
+      balance = 0;
     }
+    this.balance = new BigNumber(balance).toFormat();
     this.balanceLoaded = true;
     this.$scope.$apply();
   }

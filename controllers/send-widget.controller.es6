@@ -107,7 +107,10 @@ export default class SendWidgetController {
             }
           });
       })
-      .then(() => this.showView('sendConfirm'))
+      .then(() => {
+        this.displayedAmount = new BigNumber(this.amount).toFormat();
+        this.showView('sendConfirm');
+      })
       .catch(err => {
         let alert;
         switch (err.name) {
