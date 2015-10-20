@@ -3,23 +3,24 @@ import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')
-@Inject("$scope", "interstellar-sessions.Sessions", "interstellar-network.AccountObservable", "interstellar-network.Server")
+@Inject("$scope", "interstellar-sessions.Sessions", "interstellar-network.Server")
 export default class BalanceWidgetController {
-  constructor($scope, Sessions, AccountObservable, Server) {
+  constructor($scope, Sessions, Server) {
     if (!Sessions.hasDefault()) {
       console.error('No session. This widget should be used with active session.');
       return;
     }
 
     this.$scope = $scope;
-    this.Server = Server;
-
     let session = Sessions.default;
     this.address = session.getAddress();
     this.balanceLoaded = false;
-    AccountObservable.getBalances(this.address)
-      .then(balances => this.onBalanceChange.call(this, balances));
-    AccountObservable.registerBalanceChangeListener(this.address, balances => this.onBalanceChange.call(this, balances));
+
+    Server.accounts()
+      .address(this.address)
+      .stream({
+        onmessage: account => this.onBalanceChange.call(this, account.balances)
+      });
   }
 
   onBalanceChange(balances) {
