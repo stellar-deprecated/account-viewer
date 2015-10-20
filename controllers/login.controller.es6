@@ -47,7 +47,7 @@ export default class LoginController {
       this.processing = false;
       let alert = new Alert({
         title: 'Invalid secret key',
-        text: 'Secret keys for the new network are uppercase and begins with the letter "S".',
+        text: 'Secret keys are uppercase and begin with the letter "S."',
         type: Alert.TYPES.ERROR
       });
       this.alertGroup.show(alert);
