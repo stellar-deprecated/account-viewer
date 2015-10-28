@@ -1,4 +1,4 @@
-# basic-client
+# account-viewer
 Very simple stellar client built with interstellar.
 
 1. `npm install`
