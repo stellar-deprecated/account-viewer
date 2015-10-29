@@ -1,8 +1,8 @@
 {
-  "name": "interstellar-simple-client",
+  "name": "account-viewer",
   "version": "0.0.1",
   "private": true,
-  "description": "The stellar.org modular client",
+  "description": "A simple account-viewer",
   "scripts": {
     "test": "gulp test"
   },
@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "http://github.com/stellar/interstellar-basic-client.git"
+    "url": "http://github.com/stellar/account-viewer.git"
   },
   "dependencies": {
     "bignumber.js": "^2.0.8",

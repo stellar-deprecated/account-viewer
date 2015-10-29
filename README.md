@@ -1,5 +1,5 @@
 # account-viewer
-Very simple stellar client built with interstellar.
+A simple tool to view an account on the Stellar network and make transactions from it.
 
 1. `npm install`
 1. `npm install -g interstellar`
