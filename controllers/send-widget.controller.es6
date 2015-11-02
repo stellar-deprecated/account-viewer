@@ -49,8 +49,8 @@ export default class SendWidgetController {
 
     if (!Account.isValidAddress(this.destinationAddress)) {
       let alert = new Alert({
-        title: 'Invalid address.',
-        text: 'Addresses on the new network are uppercase and begin with the letter "G".',
+        title: 'Invalid public key.',
+        text: 'Public keys are uppercase and begin with the letter "G."',
         type: Alert.TYPES.ERROR
       });
       this.addressAlertGroup.show(alert);
@@ -58,8 +58,8 @@ export default class SendWidgetController {
 
     if (this.destinationAddress === this.session.address) {
       let alert = new Alert({
-        title: 'Invalid address.',
-        text: "You can't send to yourself.",
+        title: 'Can\'t send to yourself.',
+        text: "Enter a different public key.",
         type: Alert.TYPES.ERROR
       });
       this.addressAlertGroup.show(alert);
@@ -68,7 +68,7 @@ export default class SendWidgetController {
     // Check if amount is valid
     if (!Operation.isValidAmount(this.amount)) {
       let alert = new Alert({
-        title: 'Invalid amount.',
+        title: ''
         text: 'This amount is invalid.',
         type: Alert.TYPES.ERROR
       });
@@ -116,8 +116,8 @@ export default class SendWidgetController {
         switch (err.name) {
           case 'NotFoundError':
             alert = new Alert({
-              title: 'Account not funded.',
-              text: 'Your account is not funded.',
+              title: ''
+              text: 'Your account isn\'t funded.',
               type: Alert.TYPES.ERROR
             });
             break;
@@ -125,16 +125,14 @@ export default class SendWidgetController {
             alert = new Alert({
               title: 'Insufficient balance.',
               text:
-                `Sending this transaction will cause you to go below your
-                 <a href="https://www.stellar.org/developers/learn/concepts/fees.html#minimum-balance" target="_blank">minimum balance</a>.
-                 The most you can currently send is ${err.data.maxSend}.`,
+                `To maintain your <a href="https://www.stellar.org/developers/learn/concepts/fees.html#minimum-balance" target="_blank">minimum balance</a>, the most you can currently send is ${err.data.maxSend}.`,
               type: Alert.TYPES.ERROR
             });
             break;
           case 'DestinationAccountNotExistError':
             alert = new Alert({
-              title: 'Destination account does not exist.',
-              text: 'You account need to send at least 20 XLM to create an account.',
+              title: 'Destination account doesn\'t exist.',
+              text: 'You account must send at least 20 lumens to create an account.',
               type: Alert.TYPES.ERROR
             });
             break;
