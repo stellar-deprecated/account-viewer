@@ -13,7 +13,7 @@
 <div class="so-back">
   <div ng-controller="interstellar-basic-client.LoginController as login" class="so-chunk">
     <form ng-submit="login.submit()" class="loginBox">
-      <p class="loginBox__label">Secret:</p>
+      <p class="loginBox__label">Secret key:</p>
       <input type="password" ng-model="login.secret" class="loginBox__input" placeholder="Example: SCHKBJ............ZLJ7" />
 
       <div class="s-alert s-alert--alert" ng-if="login.alerts.length > 0">
@@ -23,7 +23,7 @@
         </span>
       </div>
 
-      <button type="submit" class="s-button loginBox__submit" ng-class="{'is-disabled': login.processing}" ng-disabled="login.processing">Login</button>
+      <button type="submit" class="s-button loginBox__submit" ng-class="{'is-disabled': login.processing}" ng-disabled="login.processing">Sign in</button>
     </form>
   </div>
 </div>
