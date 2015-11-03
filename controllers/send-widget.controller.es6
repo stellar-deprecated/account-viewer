@@ -68,7 +68,7 @@ export default class SendWidgetController {
     // Check if amount is valid
     if (!Operation.isValidAmount(this.amount)) {
       let alert = new Alert({
-        title: ''
+        title: '',
         text: 'This amount is invalid.',
         type: Alert.TYPES.ERROR
       });
@@ -116,7 +116,7 @@ export default class SendWidgetController {
         switch (err.name) {
           case 'NotFoundError':
             alert = new Alert({
-              title: ''
+              title: '',
               text: 'Your account isn\'t funded.',
               type: Alert.TYPES.ERROR
             });
