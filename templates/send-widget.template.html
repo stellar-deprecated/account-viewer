@@ -50,12 +50,13 @@
         </span>
         <input ng-model="widget.memoAddress" class="sendSetup__memo__memoSetup__input" ng-class="{'s-inputAlert--alert': widget.memoAlerts.length > 0}" placeholder="Up to 28 characters" type="text">
       </div>
-      <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.memoAlerts.length > 0">
-        <span ng-repeat="alert in widget.memoAlerts">
-          {{alert.title}} <span ng-bind-html="alert.text"></span>
-        </span>
-      </div>
     </div>
+    <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.memoAlerts.length > 0">
+      <span ng-repeat="alert in widget.memoAlerts">
+        {{alert.title}} <span ng-bind-html="alert.text"></span>
+      </span>
+    </div>
+
     <button class="s-button sendSetup__submit" ng-class="{'is-disabled': widget.sending}" ng-disabled="widget.sending" type="submit" ng-click="widget.send()">Send lumens</button>
   </div>
 
