@@ -3,23 +3,53 @@ import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')
-@Inject("$scope", "interstellar-sessions.Sessions", "interstellar-network.Server")
+@Inject("$scope", "$rootScope", "interstellar-sessions.Sessions", "interstellar-network.Server")
 export default class BalanceWidgetController {
-  constructor($scope, Sessions, Server) {
+  constructor($scope, $root$Scope, Sessions, Server) {
     if (!Sessions.hasDefault()) {
       console.error('No session. This widget should be used with active session.');
       return;
     }
 
     this.$scope = $scope;
+    this.$rootScope = $root$Scope;
+    this.Server = Server;
     let session = Sessions.default;
     this.address = session.getAddress();
     this.balanceLoaded = false;
+    this.showRefreshButton = false;
 
     Server.accounts()
       .address(this.address)
       .stream({
-        onmessage: account => this.onBalanceChange.call(this, account.balances)
+        onmessage: account => this.onBalanceChange.call(this, account.balances),
+        onerror: error => {
+          this.onStreamError.call(this, error)
+        }
+      });
+  }
+
+  onStreamError(error) {
+    if (error === 'EventSource not supported') {
+      this.showRefreshButton = true;
+      this.loadAccount();
+      this.$rootScope.$on('account-viewer.transaction-success', () => {
+        this.loadAccount();
+      });
+    }
+  }
+
+  loadAccount() {
+    return this.Server.accounts()
+      .address(this.address)
+      .call()
+      .then(account => this.onBalanceChange.call(this, account.balances))
+      .catch(e => {
+        if (e.name === 'NotFoundError') {
+          this.onBalanceChange.call(this, null);
+        } else {
+          throw e;
+        }
       });
   }
 

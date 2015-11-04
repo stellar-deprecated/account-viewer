@@ -6,9 +6,9 @@ import {Account, Asset, Keypair, Operation, TransactionBuilder} from 'stellar-ba
 import BasicClientError from '../errors';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
-@Inject("$scope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
+@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
 export default class SendWidgetController {
-  constructor($scope, $sce, Sessions, Server, Alerts) {
+  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts) {
     if (!Sessions.hasDefault()) {
       console.error('No session');
       return;
@@ -16,6 +16,7 @@ export default class SendWidgetController {
 
     this.view = 'sendSetup';
     this.$scope = $scope;
+    this.$rootScope = $rootScope;
     this.Server = Server;
     this.Sessions = Sessions;
     this.session = Sessions.default;
@@ -194,6 +195,7 @@ export default class SendWidgetController {
         this.success = true;
         this.destinationAddress = null;
         this.amount = null;
+        this.$rootScope.$broadcast('account-viewer.transaction-success');
       })
       .catch(e => {
         this.success = false;
