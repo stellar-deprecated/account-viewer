@@ -2,7 +2,7 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import {Widget, Inject, Intent} from 'interstellar-core';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import {Account, Asset, Keypair, Operation, TransactionBuilder} from 'stellar-base';
+import {Account, Asset, Keypair, Memo, Operation, TransactionBuilder} from 'stellar-base';
 import BasicClientError from '../errors';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
@@ -21,6 +21,9 @@ export default class SendWidgetController {
     this.Sessions = Sessions;
     this.session = Sessions.default;
     this.rocketImage = require('../images/sending.gif');
+    this.memo = false;
+    this.memoType = null;
+    this.memoValue = null;
 
     this.addressAlertGroup = new AlertGroup();
     this.addressAlertGroup.registerUpdateListener(alerts => {
@@ -37,6 +40,26 @@ export default class SendWidgetController {
       this.amountAlerts = alerts;
     });
     Alerts.registerGroup(this.amountAlertGroup);
+
+    this.memoAlertGroup = new AlertGroup();
+    this.memoAlertGroup.registerUpdateListener(alerts => {
+      this.memoAlerts = alerts;
+    });
+    Alerts.registerGroup(this.memoAlertGroup);
+  }
+
+  showMemo($event) {
+    $event.preventDefault();
+    this.memo = true;
+    this.memoType = 'MEMO_TEXT';
+  }
+
+  hideMemo($event) {
+    $event.preventDefault();
+    this.memoAlertGroup.clear();
+    this.memo = false;
+    this.memoType = null;
+    this.memoValue = null;
   }
 
   showView(v) {
@@ -47,6 +70,7 @@ export default class SendWidgetController {
     this.sending = true;
     this.addressAlertGroup.clear();
     this.amountAlertGroup.clear();
+    this.memoAlertGroup.clear();
 
     if (!Account.isValidAddress(this.destinationAddress)) {
       let alert = new Alert({
@@ -76,7 +100,38 @@ export default class SendWidgetController {
       this.amountAlertGroup.show(alert);
     }
 
-    if (this.addressAlerts.length || this.amountAlerts.length) {
+    if (this.memo) {
+      let memo, memoError;
+      try {
+        switch (this.memoType) {
+          case 'MEMO_TEXT':
+            memoError = 'MEMO_TEXT must contain a maximum of 28 characters';
+            memo = Memo.text(this.memoValue);
+            break;
+          case 'MEMO_ID':
+            memoError = 'MEMO_ID must be a valid 64 bit unsigned integer';
+            memo = Memo.id(this.memoValue);
+            break;
+          case 'MEMO_HASH':
+            memoError = 'MEMO_HASH must be a 32 byte hash represented in hexadecimal (A-Z0-9)';
+            memo = Memo.hash(this.memoValue);
+            break;
+          case 'MEMO_RETURN':
+            memoError = 'MEMO_RETURN must be a 32 byte hash represented in hexadecimal (A-Z0-9)';
+            memo = Memo.returnHash(this.memoValue);
+            break;
+        }
+      } catch (error) {
+        let alert = new Alert({
+          title: '',
+          text: memoError,
+          type: Alert.TYPES.ERROR
+        });
+        this.memoAlertGroup.show(alert);
+      }
+    }
+
+    if (this.addressAlerts.length || this.amountAlerts.length || this.memoAlerts.length) {
       this.sending = false;
       return;
     }
@@ -184,8 +239,28 @@ export default class SendWidgetController {
   _submitTransaction(operation) {
     return this.Sessions.loadDefaultAccount()
       .then(() => {
+        let memo = Memo.none();
+
+        if (this.memo) {
+          switch (this.memoType) {
+            case 'MEMO_TEXT':
+              memo = Memo.text(this.memoValue);
+              break;
+            case 'MEMO_ID':
+              memo = Memo.id(this.memoValue);
+              break;
+            case 'MEMO_HASH':
+              memo = Memo.hash(this.memoValue);
+              break;
+            case 'MEMO_RETURN':
+              memo = Memo.returnHash(this.memoValue);
+              break;
+          }
+        }
+
         let transaction = new TransactionBuilder(this.session.getAccount())
           .addOperation(operation)
+          .addMemo(memo)
           .addSigner(Keypair.fromSeed(this.session.getSecret()))
           .build();
 
