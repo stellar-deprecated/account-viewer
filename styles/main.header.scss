@@ -196,9 +196,15 @@
   }
   .sendConfirm__sendingContainer {
     @include S-flex-row;
+    background: $s-color-neutral8;
+  }
+
+  .sendConfirm__sendingMemoContainer {
+    @include S-flex-row;
     margin-bottom: 2em;
     background: $s-color-neutral8;
   }
+
     .sendConfirm__sendingContainer__label {
       @include S-flex-row;
       @include S-flexItem-1of3;

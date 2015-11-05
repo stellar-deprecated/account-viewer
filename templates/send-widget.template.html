@@ -76,6 +76,13 @@
       </div>
     </div>
 
+    <div class="sendConfirm__sendingMemoContainer" ng-if="widget.memo">
+      <div class="sendConfirm__sendingContainer__label">Memo</div>
+      <div class="sendConfirm__sendingContainer__amount">
+        <span class="sendConfirm__sendingContainer__amount__type">{{widget.memoValue}}</span>
+      </div>
+    </div>
+
     <button class="s-button sendConfirm__submit" ng-click="widget.confirm()">Submit transaction</button>
 
     <a href="#" class="sendConfirm__edit" ng-click="widget.showView('sendSetup')">← Edit</a>
