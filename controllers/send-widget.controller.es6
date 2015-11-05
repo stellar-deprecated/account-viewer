@@ -123,7 +123,7 @@ export default class SendWidgetController {
         }
       } catch (error) {
         let alert = new Alert({
-          title: 'Invalid memo.',
+          title: '',
           text: memoError,
           type: Alert.TYPES.ERROR
         });
