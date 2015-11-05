@@ -1,5 +1,3 @@
-require("file?name=index.html!./index.html");
-
 require('./styles/main.header.scss');
 require('./styles/main.footer.scss');
 
