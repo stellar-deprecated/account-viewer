@@ -70,16 +70,18 @@
     <div class="sendConfirm__sendingContainer">
       <div class="sendConfirm__sendingContainer__label">Sending</div>
       <div class="sendConfirm__sendingContainer__amount">
-        <span class="sendConfirm__sendingContainer__amount__number">{{widget.displayedAmount}}</span>
-        <br>
-        <span class="sendConfirm__sendingContainer__amount__type">lumens</span>
+        <span class="sendConfirm__sendingContainer__amount__info">{{widget.displayedAmount}}</span>
+        <br />
+        <span class="sendConfirm__sendingContainer__amount__label">lumens</span>
       </div>
     </div>
 
-    <div class="sendConfirm__sendingMemoContainer" ng-if="widget.memo">
+    <div class="sendConfirm__sendingContainer" ng-if="widget.memo">
       <div class="sendConfirm__sendingContainer__label">Memo</div>
       <div class="sendConfirm__sendingContainer__amount">
-        <span class="sendConfirm__sendingContainer__amount__type">{{widget.memoValue}}</span>
+        <span class="sendConfirm__sendingContainer__amount__helper">{{widget.memoType}}:</span>
+        <br />
+        <span class="sendConfirm__sendingContainer__amount__info">{{widget.memoValue}}</span>
       </div>
     </div>
 

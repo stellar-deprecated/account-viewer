@@ -197,12 +197,7 @@
   .sendConfirm__sendingContainer {
     @include S-flex-row;
     background: $s-color-neutral8;
-  }
-
-  .sendConfirm__sendingMemoContainer {
-    @include S-flex-row;
-    margin-bottom: 2em;
-    background: $s-color-neutral8;
+    margin-bottom: 0.25em;
   }
 
     .sendConfirm__sendingContainer__label {
@@ -215,19 +210,20 @@
       @include S-flexItem-share;
       padding: 1.5em 1em;
     }
-      .sendConfirm__sendingContainer__amount__number {
+      .sendConfirm__sendingContainer__amount__info {
         font-size: $s-scale-1;
         font-weight: bold;
         line-height: 1;
         word-wrap: break-word;
         word-break: break-word;
       }
-      .sendConfirm__sendingContainer__amount__type {
+      .sendConfirm__sendingContainer__amount__helper {
         font-size: $s-scale-4;
       }
   .sendConfirm__submit {
     width: 100%;
     font-size: $s-scale-2;
+    margin-top: 1em;
     margin-bottom: 1em;
   }
   .sendConfirm__edit {
