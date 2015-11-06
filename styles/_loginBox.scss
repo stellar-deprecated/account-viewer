@@ -1,0 +1,22 @@
+.loginBox {
+  max-width: 25em;
+  padding: 2em;
+  border: 1px solid $s-color-primary8;
+  background: $s-color-primary9;
+}
+  .loginBox__label {
+    margin-bottom: 0;
+  }
+  .loginBox__input {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+  }
+  .loginBox__submit {
+    padding-left: 2em;
+    padding-right: 2em;
+    @include r-media(s) {
+      padding-left: 5em;
+      padding-right: 5em;
+    }
+  }

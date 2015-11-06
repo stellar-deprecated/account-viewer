@@ -1,0 +1,50 @@
+.sendConfirm {
+}
+  .sendConfirm__addressLabel {
+    text-align: center;
+    font-size: $s-scale-5;
+    margin-bottom: 0em;
+  }
+  .sendConfirm__address {
+    padding: 0 2em;
+    font-size: $s-scale-3;
+    text-align: center;
+    word-break: break-all;
+    font-weight: bold;
+  }
+  .sendConfirm__sendingContainer {
+    @include S-flex-row;
+    background: $s-color-neutral8;
+    margin-bottom: 0.25em;
+  }
+    .sendConfirm__sendingContainer__label {
+      @include S-flex-row;
+      @include S-flexItem-1of3;
+      align-items: center;
+      padding-left: 2em;
+    }
+    .sendConfirm__sendingContainer__amount {
+      @include S-flexItem-share;
+      padding: 1.5em 1em;
+    }
+      .sendConfirm__sendingContainer__amount__info {
+        font-size: $s-scale-1;
+        font-weight: bold;
+        line-height: 1;
+        word-wrap: break-word;
+        word-break: break-word;
+      }
+      .sendConfirm__sendingContainer__amount__helper {
+        font-size: $s-scale-4;
+      }
+
+  .sendConfirm__submit {
+    width: 100%;
+    font-size: $s-scale-2;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  .sendConfirm__edit {
+    display: block;
+    text-align: center;
+  }

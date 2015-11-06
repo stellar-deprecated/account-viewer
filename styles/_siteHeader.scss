@@ -1,0 +1,12 @@
+.siteHeader {
+  justify-content: space-between;
+}
+.siteHeader__signout {
+  @include S-flexItem-full;
+  @include r-media(m) {
+    @include S-flexItem-noFlex;
+  }
+}
+.siteHeader__signout__link:hover {
+  color: $s-color-primary3;
+}
