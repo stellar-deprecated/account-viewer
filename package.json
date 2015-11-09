@@ -19,7 +19,7 @@
     "interstellar-sessions": "~0.0.6",
     "interstellar-ui-messages": "~0.0.3",
     "lodash": "^3.10.1",
-    "stellar-base": "~0.4.13"
+    "stellar-base": "~0.4.14"
   },
   "devDependencies": {
     "gulp": "^3.9.0"
