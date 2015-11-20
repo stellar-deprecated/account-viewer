@@ -12,6 +12,10 @@
 
 <div class="so-back">
   <div ng-controller="interstellar-basic-client.LoginController as login" class="so-chunk">
+    <div class="welcomeBox">
+      <h2 class="welcomeBox__title">Welcome to the upgraded network!</h2>
+      <p>Sign in here to access your account on the upgraded network. If you haven't upgraded yet, go to launch.stellar.org to do it now.</p>
+    </div>
     <form ng-submit="login.submit()" class="loginBox">
       <p class="loginBox__label">Secret key:</p>
       <input type="password" ng-model="login.secret" class="loginBox__input" placeholder="Example: SCHKBJ............ZLJ7" />
