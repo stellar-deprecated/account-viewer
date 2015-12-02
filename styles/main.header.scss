@@ -19,6 +19,10 @@
 @import "sendSetup";
 @import "sendWaiting";
 
+@import "history";
+@import "historyTable";
+
+
 .sendSetup, .sendConfirm, .sendWaiting, .sendOutcome {
   max-width: 36em;
   margin: 0 auto 3em 0;
