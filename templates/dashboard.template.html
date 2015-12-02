@@ -28,30 +28,51 @@
         <tr class="historyTable__row historyTable__row--header">
           <th class="historyTable__cell">Date</th>
           <th class="historyTable__cell">Account ID</th>
-          <th class="historyTable__cell">Lumen Amount</th>
+          <th class="historyTable__cell">Amount</th>
           <th class="historyTable__cell">Memo</th>
           <th class="historyTable__cell">Operation ID</th>
         </tr>
         <tr class="historyTable__row historyTable__row--data">
           <td class="historyTable__cell historyTable__date">{{'2015-08-06T18:20:50Z' | date:"MMMM d, y H:mm:ss Z"}}</td>
           <td class="historyTable__cell historyTable__accountID">GDLGTRIBFH24364GPWPUS45GUFC2GU4ARPGWTXVCPLGTUHX3IOS3ON47</td>
-          <td class="historyTable__cell historyTable__amount"><code class="historyTable__amount__credit">+2512.1234567</code></td>
+          <td class="historyTable__cell historyTable__amount">
+            <code ng-class="{
+              'historyTable__amount__number': true,
+              'historyTable__amount__number--credit': +2512.1234567 > 0,
+              'historyTable__amount__number--debit':  +2512.1234567 < 0,
+            }">+2512.1234567</code>
+            <code class="historyTable__amount__code">XLM</code>
+          </td>
           <td class="historyTable__cell historyTable__memo">MEMO_TEXT<br /><code class="historyTable__memo__data">5729375-A</code></td>
-          <td class="historyTable__cell historyTable__details"><code><a href="https://horizon-testnet.stellar.org/operations/13563506724865">13563506724865</a></code></td>
+          <td class="historyTable__cell historyTable__details"><code><a href="https://horizon-testnet.stellar.org/operations/1475381395722241">1475381395722241</a></code></td>
         </tr>
         <tr class="historyTable__row historyTable__row--data">
           <td class="historyTable__cell historyTable__date">{{'2015-08-06T18:20:50Z' | date:"MMMM d, y H:mm:ss Z"}}</td>
           <td class="historyTable__cell historyTable__accountID">GDLGTRIBFH24364GPWPUS45GUFC2GU4ARPGWTXVCPLGTUHX3IOS3ON47</td>
-          <td class="historyTable__cell historyTable__amount"><code class="historyTable__amount__credit">+21.1234560</code></td>
-          <td class="historyTable__cell historyTable__memo">MEMO_HASH<br /><code class="historyTable__memo__data">8af1b90143c41598f024b5ad8c17401efabd951d9b94d09e645611b1b5ae1667</code></td>
-          <td class="historyTable__cell historyTable__details"><code><a href="https://horizon-testnet.stellar.org/operations/13563506724865">13563506724865</a></code></td>
-        </tr>
-        <tr class="historyTable__row historyTable__row--data">
-          <td class="historyTable__cell historyTable__date">{{'2015-08-06T18:20:50Z' | date:"MMMM d, y H:mm:ss Z"}}</td>
-          <td class="historyTable__cell historyTable__accountID">GDLGTRIBFH24364GPWPUS45GUFC2GU4ARPGWTXVCPLGTUHX3IOS3ON47</td>
-          <td class="historyTable__cell historyTable__amount"><code class="historyTable__amount__debit">-{{'12.1230000'}}</code></td>
+          <td class="historyTable__cell historyTable__amount">
+            <code ng-class="{
+              'historyTable__amount__number': true,
+              'historyTable__amount__number--credit': -123.1234567 > 0,
+              'historyTable__amount__number--debit':  -123.1234567 < 0,
+            }">-123.1234567</code>
+            <code class="historyTable__amount__code">AU0000XVGZA3</code>
+          </td>
           <td class="historyTable__cell historyTable__memo">NONE</td>
-          <td class="historyTable__cell historyTable__details"><code><a href="https://horizon-testnet.stellar.org/operations/13563506724865">13563506724865</a></code></td>
+          <td class="historyTable__cell historyTable__details"><code><a href="https://horizon-testnet.stellar.org/operations/1475381395722241">1475381395722241</a></code></td>
+        </tr>
+        <tr class="historyTable__row historyTable__row--data">
+          <td class="historyTable__cell historyTable__date">{{'2015-08-06T18:20:50Z' | date:"MMMM d, y H:mm:ss Z"}}</td>
+          <td class="historyTable__cell historyTable__accountID">GDLGTRIBFH24364GPWPUS45GUFC2GU4ARPGWTXVCPLGTUHX3IOS3ON47</td>
+          <td class="historyTable__cell historyTable__amount">
+            <code ng-class="{
+              'historyTable__amount__number': true,
+              'historyTable__amount__number--credit': +1000.12 > 0,
+              'historyTable__amount__number--debit':  +1000.12 < 0,
+            }">+1000.12</code>
+            <code class="historyTable__amount__code">XLM</code>
+          </td>
+          <td class="historyTable__cell historyTable__memo">MEMO_HASH<br /><code class="historyTable__memo__data">8af1b90143c41598f024b5ad8c17401efabd951d9b94d09e645611b1b5ae1667</code></td>
+          <td class="historyTable__cell historyTable__details"><code><a href="https://horizon-testnet.stellar.org/operations/1475381395722241">1475381395722241</a></code></td>
         </tr>
       </table>
     </div>
