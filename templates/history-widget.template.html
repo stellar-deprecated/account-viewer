@@ -1,0 +1,44 @@
+<div class="so-chunk" ng-controller="interstellar-basic-client.HistoryWidgetController as widget">
+  <h2 class="history__title">Transaction History</h2>
+
+  <p class="s-alert s-alert--warning" ng-if="widget.payments.length >= 100">
+    This tool is only able to show your latest 100 payment operations. To view more, use the Horizon API.
+  </p>
+
+  <div class="history__table" ng-if="widget.payments.length > 0">
+    <table class="historyTable">
+      <tr class="historyTable__row historyTable__row--header">
+        <!-- <th class="historyTable__cell">Date</th> -->
+        <th class="historyTable__cell">Account ID</th>
+        <th class="historyTable__cell">Amount</th>
+        <th class="historyTable__cell">Memo</th>
+        <th class="historyTable__cell">Operation ID</th>
+      </tr>
+       <tr class="historyTable__row historyTable__row--data" ng-repeat="payment in widget.payments">
+        <!-- <td class="historyTable__cell historyTable__date">{{'2015-08-06T18:20:50Z' | date:"MMMM d, y H:mm:ss Z"}}</td> -->
+        <td class="historyTable__cell historyTable__accountID">{{payment.display_address}}</td>
+        <td class="historyTable__cell historyTable__amount">
+          <code ng-class="{
+            'historyTable__amount__number': true,
+            'historyTable__amount__number--credit': payment.direction == 'in',
+            'historyTable__amount__number--debit':  payment.direction == 'out',
+          }">{{payment.display_amount}}</code>
+          <code class="historyTable__amount__code">{{payment.display_asset_code}}</code>
+        </td>
+        <td class="historyTable__cell historyTable__memo">
+          <span ng-if="payment.memo_type">
+            MEMO_{{payment.memo_type|uppercase}}<br />
+            <code class="historyTable__memo__data">{{payment.memo}}</code>
+          </span>
+          <span ng-if="!payment.memo_type">Loading...</span>
+        </td>
+        <td class="historyTable__cell historyTable__details"><code><a ng-href="{{payment.link}}" target="_blank">{{payment.id}}</a></code></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="history__table" ng-if="widget.payments.length == 0">
+    <div ng-if="widget.loading">Loading...</div>
+    <div ng-if="!widget.loading">No payments yet...</div>
+  </div>
+</div>

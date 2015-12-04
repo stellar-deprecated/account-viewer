@@ -52,6 +52,7 @@ export default class SendWidgetController {
     $event.preventDefault();
     this.memo = true;
     this.memoType = 'MEMO_TEXT';
+    this.memoValue = null;
   }
 
   hideMemo($event) {
@@ -270,6 +271,7 @@ export default class SendWidgetController {
         this.success = true;
         this.destinationAddress = null;
         this.amount = null;
+        this.memo = false;
         this.$rootScope.$broadcast('account-viewer.transaction-success');
       })
       .catch(e => {
