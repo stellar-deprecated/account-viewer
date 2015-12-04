@@ -16,6 +16,7 @@ export default class HistoryWidgetController {
     this.address = session.getAddress();
     this.payments = [];
     this.loading = true;
+    this.showLengthLimitAlert = false;
 
     this.loadPayments()
       .then(() => this.setupSteaming());
@@ -31,6 +32,10 @@ export default class HistoryWidgetController {
         this.payments = _.map(payments.records, payment => {
           return this._transformPaymentFields(payment);
         });
+
+        if (this.payments.length >= 100) {
+          this.showLengthLimitAlert = true;
+        }
       })
       .catch(e => {
         if (e.name !== 'NotFoundError') {

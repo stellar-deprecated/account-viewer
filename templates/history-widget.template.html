@@ -1,8 +1,8 @@
 <div class="so-chunk" ng-controller="interstellar-basic-client.HistoryWidgetController as widget">
   <h2 class="history__title">Transaction History</h2>
 
-  <p class="s-alert s-alert--warning" ng-if="widget.payments.length >= 100">
-    This tool is only able to show your latest 100 payment operations. To view more, use the Horizon API.
+  <p class="s-alert s-alert--warning" ng-if="widget.showLengthLimitAlert">
+    This tool shows up to 100 most recent payments. To view more, use the Horizon API.
   </p>
 
   <div class="history__table" ng-if="widget.payments.length > 0">
