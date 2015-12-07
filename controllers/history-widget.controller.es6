@@ -1,4 +1,5 @@
 import {Widget, Inject} from 'interstellar-core';
+import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
 @Widget('history', 'HistoryWidgetController', 'interstellar-basic-client/history-widget')
@@ -79,7 +80,8 @@ export default class HistoryWidgetController {
     payment.direction = (payment.from === this.address) ? 'out' : 'in';
     payment.display_address = (payment.from === this.address) ? payment.to : payment.from;
     let sign = payment.direction === 'in' ? '+' : '-';
-    payment.display_amount = `${sign}${payment.amount}`;
+    let formattedAmount = new BigNumber(payment.amount).toFormat();
+    payment.display_amount = `${sign}${formattedAmount}`;
 
     if (payment.asset_code) {
       payment.display_asset_code = payment.asset_code;
