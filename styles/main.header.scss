@@ -22,6 +22,8 @@
 @import "history";
 @import "historyTable";
 
+@import "belowFoldIndicator";
+
 
 .sendSetup, .sendConfirm, .sendWaiting, .sendOutcome {
   max-width: 36em;

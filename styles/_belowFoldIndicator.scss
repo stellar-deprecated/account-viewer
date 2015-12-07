@@ -1,0 +1,50 @@
+.belowFoldIndicator {
+  display: none;
+  position: fixed;
+  right: 36px;
+  bottom: 36px;
+
+  width: 108px;
+  height: 108px;
+  padding: 18px;
+
+  cursor: pointer;
+  background: $s-color-neutral7;
+  opacity: 0.8;
+  border-radius: $s-var-radius;
+
+  @include r-media(l) {
+    display: block;
+  }
+}
+.belowFoldIndicator:hover {
+  opacity: 1;
+}
+  .belowFoldIndicator__label {
+    text-align: center;
+    font-size: $s-scale-6;
+  }
+  .belowFoldIndicator__arrow {
+    position: relative;
+    margin: 0 auto;
+    width: 16px;
+    height: 16px;
+
+    border-top: 16px solid $s-color-neutral4;
+    border-bottom: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    animation-duration: .8s;
+    animation-name: belowFoldIndicator__bobble;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+
+  @keyframes belowFoldIndicator__bobble {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.6;
+    }
+  }
