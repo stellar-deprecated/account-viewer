@@ -25,6 +25,21 @@ export default class SendWidgetController {
     this.memoType = null;
     this.memoValue = null;
 
+    this.$scope.$watch('widget.memoType', type => {
+      switch (type) {
+        case 'MEMO_ID':
+          this.memoPlaceholder = 'Type a number';
+          break;
+        case 'MEMO_TEXT':
+          this.memoPlaceholder = 'Up to 28 characters';
+          break;
+        case 'MEMO_HASH':
+        case 'MEMO_RETURN':
+          this.memoPlaceholder = 'Type hex encoded 32 bytes';
+          break;
+      }
+    });
+
     this.addressAlertGroup = new AlertGroup();
     this.addressAlertGroup.registerUpdateListener(alerts => {
       this.addressAlerts = alerts;
