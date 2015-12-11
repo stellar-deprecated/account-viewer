@@ -28,14 +28,14 @@ export default class SendWidgetController {
     this.$scope.$watch('widget.memoType', type => {
       switch (type) {
         case 'MEMO_ID':
-          this.memoPlaceholder = 'Type a number';
+          this.memoPlaceholder = 'Enter memo ID number';
           break;
         case 'MEMO_TEXT':
           this.memoPlaceholder = 'Up to 28 characters';
           break;
         case 'MEMO_HASH':
         case 'MEMO_RETURN':
-          this.memoPlaceholder = 'Type hex encoded 32 bytes';
+          this.memoPlaceholder = 'Enter encoded string';
           break;
       }
     });
