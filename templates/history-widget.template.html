@@ -26,7 +26,7 @@
           <code class="historyTable__amount__code">{{payment.display_asset_code}}</code>
         </td>
         <td class="historyTable__cell historyTable__memo">
-          <span ng-if="payment.memo_type">
+          <span ng-if="payment.memo_type && payment.memo_type != 'none'">
             MEMO_{{payment.memo_type|uppercase}}<br />
             <code class="historyTable__memo__data">{{payment.memo}}</code>
           </span>
