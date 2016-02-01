@@ -88,7 +88,7 @@ export default class SendWidgetController {
     this.amountAlertGroup.clear();
     this.memoAlertGroup.clear();
 
-    if (!Account.isValidAddress(this.destinationAddress)) {
+    if (!Account.isValidAccountId(this.destinationAddress)) {
       let alert = new Alert({
         title: 'Invalid public key.',
         text: 'Public keys are uppercase and begin with the letter "G."',
@@ -153,7 +153,7 @@ export default class SendWidgetController {
     }
 
     return this.Server.accounts()
-      .address(this.session.address)
+      .accountId(this.session.address)
       .call()
       .then(account => {
         // Check if sending this transaction would make balance go below minimum balance
@@ -171,7 +171,7 @@ export default class SendWidgetController {
         }
 
         return this.Server.accounts()
-          .address(this.destinationAddress)
+          .accountId(this.destinationAddress)
           .call()
           .catch(err => {
             if (err.name === 'NotFoundError') {
@@ -227,7 +227,7 @@ export default class SendWidgetController {
   confirm() {
     this.showView('sendWaiting');
     return this.Server.accounts()
-      .address(this.destinationAddress)
+      .accountId(this.destinationAddress)
       .call()
       .then(() => {
         // Account exist. Send payment operation.
@@ -277,8 +277,9 @@ export default class SendWidgetController {
         let transaction = new TransactionBuilder(this.session.getAccount())
           .addOperation(operation)
           .addMemo(memo)
-          .addSigner(Keypair.fromSeed(this.session.getSecret()))
           .build();
+
+        transaction.sign(Keypair.fromSeed(this.session.getSecret()));
 
         return this.Server.submitTransaction(transaction);
       })

@@ -37,7 +37,7 @@ export default class LoginController {
     let secret = this.secret;
     try {
       let keypair = Keypair.fromSeed(secret);
-      let address = keypair.address();
+      let address = keypair.accountId();
       let permanent = this.Config.get("permanentSession");
       this.Sessions.createDefault({address, secret, permanent})
         .then(() => {

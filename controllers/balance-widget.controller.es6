@@ -20,7 +20,7 @@ export default class BalanceWidgetController {
     this.showRefreshButton = false;
 
     Server.accounts()
-      .address(this.address)
+      .accountId(this.address)
       .stream({
         onmessage: account => this.onBalanceChange.call(this, account.balances),
         onerror: error => {
@@ -41,7 +41,7 @@ export default class BalanceWidgetController {
 
   loadAccount() {
     return this.Server.accounts()
-      .address(this.address)
+      .accountId(this.address)
       .call()
       .then(account => this.onBalanceChange.call(this, account.balances))
       .catch(e => {
