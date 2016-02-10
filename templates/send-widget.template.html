@@ -52,15 +52,23 @@
           <div ng-if="widget.memoBlocked">
             You can't change the memo because it is part of this Stellar address.
           </div>
-          <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag">
-            <select ng-model="widget.memoType" ng-disabled="widget.memoBlocked" class="sendSetup__memo__memoSetup__selectTag__select">
+          <span
+            class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag"
+            ng-class="{'is-disabled': widget.memoBlocked}">
+            <select ng-model="widget.memoType" ng-disabled="widget.memoBlocked"
+              class="sendSetup__memo__memoSetup__selectTag__select"
+              ng-class="{'is-disabled': widget.memoBlocked}">
               <option>MEMO_TEXT</option>
               <option>MEMO_ID</option>
               <option>MEMO_HASH</option>
               <option>MEMO_RETURN</option>
             </select>
           </span>
-          <input ng-model="widget.memoValue" ng-disabled="widget.memoBlocked" class="sendSetup__memo__memoSetup__input" ng-class="{'s-inputAlert--alert': widget.memoAlerts.length > 0}" placeholder="{{widget.memoPlaceholder}}" type="text">
+          <input ng-model="widget.memoValue"
+            ng-disabled="widget.memoBlocked"
+            class="sendSetup__memo__memoSetup__input"
+            ng-class="{'s-inputAlert--alert': widget.memoAlerts.length > 0, 'is-disabled': widget.memoBlocked}"
+            placeholder="{{widget.memoPlaceholder}}" type="text">
         </div>
       </div>
     </div>
