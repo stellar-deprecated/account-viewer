@@ -31,7 +31,6 @@
       </span>
     </div>
 
-
     <div class="sendSetup__memo">
       <p class="sendSetup__titleBar" ng-if="!widget.memo">
         <a href="#" ng-if="!widget.memoBlocked" ng-click="widget.showMemo($event);">Add memo</a>
@@ -49,9 +48,6 @@
           </span>
         </p>
         <div class="s-inputGroup sendSetup__memo__memoSetup">
-          <div ng-if="widget.memoBlocked">
-            Note: The specified federation address requires this transaction memo to be set to a certain value.
-          </div>
           <span
             class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag"
             ng-class="{'is-disabled': widget.memoBlocked}">
@@ -71,6 +67,11 @@
             placeholder="{{widget.memoPlaceholder}}" type="text">
         </div>
       </div>
+    </div>
+    <div ng-if="widget.memoBlocked"  class="s-alert s-alert--info sendSetup__info">
+      <span>
+        <strong>Note</strong>: The specified federation address requires this transaction's memo to be a certain value.
+      </span>
     </div>
     <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.memoAlerts.length > 0">
       <span ng-repeat="alert in widget.memoAlerts">
