@@ -5,10 +5,10 @@
     <div class="sendSetup__destination">
       <input ng-model="widget.destinationAddress" ng-blur="widget.loadDestination($event);" class="sendSetup__destination__input" ng-class="{'s-inputAlert--alert': widget.addressAlerts.length > 0}" placeholder="Recipient's public key or address" type="text">
     </div>
-    <div class="sendSetup__destination" ng-if="widget.loadingDestination">
-      Loading...
+    <div class="s-alert s-alert--info sendSetup__info" ng-if="widget.loadingDestination">
+      Loading federation info...
     </div>
-    <div class="sendSetup__destination" ng-if="!widget.loadingDestination && widget.stellarAddress">
+    <div class="s-alert s-alert--info sendSetup__info" ng-if="!widget.loadingDestination && widget.stellarAddress">
       Stellar address: <code>{{widget.stellarAddress}}</code>
       resolved to: <code>{{widget.destination}}</code>
     </div>
