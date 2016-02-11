@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import {Widget, Inject, Intent} from 'interstellar-core';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
 import {Account, Asset, Keypair, Memo, Operation, TransactionBuilder} from 'stellar-base';
+import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
@@ -24,6 +25,10 @@ export default class SendWidgetController {
     this.memo = false;
     this.memoType = null;
     this.memoValue = null;
+    this.memoBlocked = false;
+    this.stellarAddress = null;
+    // Resolved destination (accountId/address)
+    this.destination = null;
 
     this.$scope.$watch('widget.memoType', type => {
       switch (type) {
@@ -63,6 +68,54 @@ export default class SendWidgetController {
     Alerts.registerGroup(this.memoAlertGroup);
   }
 
+  loadDestination($event) {
+    this.loadingDestination = true;
+    FederationServer.resolve(this.destinationAddress)
+      .then(value => {
+        this.destination = value.account_id;
+
+        if (this.destinationAddress == this.destination) {
+          this.stellarAddress = null;
+        } else {
+          this.stellarAddress = this.destinationAddress;
+        }
+
+        switch (value.memo_type) {
+          case 'id':
+            value.memo_type = 'MEMO_ID';
+            break;
+          case 'text':
+            value.memo_type = 'MEMO_TEXT';
+            break;
+          case 'hash':
+            value.memo_type = 'MEMO_HASH';
+            break;
+          default:
+            delete value.memo;
+            delete value.memo_type;
+        }
+
+        if (value.memo_type && value.memo) {
+          this.memo = true;
+          this.memoType = value.memo_type;
+          this.memoValue = value.memo;
+          this.memoBlocked = true;
+        } else {
+          this.memoBlocked = false;
+          this.hideMemo();
+        }
+        this.loadingDestination = false;
+      })
+      .catch(error => {
+        console.log(error);
+        this.destination = null;
+        this.stellarAddress = null;
+        this.loadingDestination = false;
+        this.memoBlocked = false;
+        this.hideMemo();
+      });
+  }
+
   showMemo($event) {
     $event.preventDefault();
     this.memo = true;
@@ -71,24 +124,33 @@ export default class SendWidgetController {
   }
 
   hideMemo($event) {
-    $event.preventDefault();
+    if ($event) {
+      $event.preventDefault();
+    }
     this.memoAlertGroup.clear();
     this.memo = false;
     this.memoType = null;
     this.memoValue = null;
   }
 
-  showView(v) {
+  showView($event, v) {
+    if ($event) {
+      $event.preventDefault();
+    }
     this.view = v;
   }
 
   send() {
+    if (this.loadingDestination) {
+      return false;
+    }
+
     this.sending = true;
     this.addressAlertGroup.clear();
     this.amountAlertGroup.clear();
     this.memoAlertGroup.clear();
 
-    if (!Account.isValidAccountId(this.destinationAddress)) {
+    if (!Account.isValidAccountId(this.destination)) {
       let alert = new Alert({
         title: 'Invalid public key.',
         text: 'Public keys are uppercase and begin with the letter "G."',
@@ -97,7 +159,7 @@ export default class SendWidgetController {
       this.addressAlertGroup.show(alert);
     }
 
-    if (this.destinationAddress === this.session.address) {
+    if (this.destination && this.destination === this.session.address) {
       let alert = new Alert({
         title: 'Can\'t send to yourself.',
         text: "Enter a different public key.",
@@ -171,7 +233,7 @@ export default class SendWidgetController {
         }
 
         return this.Server.accounts()
-          .accountId(this.destinationAddress)
+          .accountId(this.destination)
           .call()
           .catch(err => {
             if (err.name === 'NotFoundError') {
@@ -181,7 +243,7 @@ export default class SendWidgetController {
       })
       .then(() => {
         this.displayedAmount = new BigNumber(this.amount).toFormat();
-        this.showView('sendConfirm');
+        this.showView(null, 'sendConfirm');
       })
       .catch(err => {
         let alert;
@@ -210,7 +272,7 @@ export default class SendWidgetController {
             break;
           default:
             alert = new Alert({
-              title: 'Unknown error.',
+              title: 'Unknown error: '+err.name,
               text: '',
               type: Alert.TYPES.ERROR
             });
@@ -225,14 +287,14 @@ export default class SendWidgetController {
   }
 
   confirm() {
-    this.showView('sendWaiting');
+    this.showView(null, 'sendWaiting');
     return this.Server.accounts()
-      .accountId(this.destinationAddress)
+      .accountId(this.destination)
       .call()
       .then(() => {
         // Account exist. Send payment operation.
         let operation = Operation.payment({
-          destination: this.destinationAddress,
+          destination: this.destination,
           asset: Asset.native(),
           amount: this.amount
         });
@@ -242,7 +304,7 @@ export default class SendWidgetController {
         if (err.name === 'NotFoundError') {
           // Account does not exist. Send create_account operation.
           let operation = Operation.createAccount({
-            destination: this.destinationAddress,
+            destination: this.destination,
             startingBalance: this.amount
           });
           return this._submitTransaction(operation);
@@ -286,6 +348,7 @@ export default class SendWidgetController {
       .then(() => {
         this.success = true;
         this.destinationAddress = null;
+        this.destination = null;
         this.amount = null;
         this.memo = false;
         this.$rootScope.$broadcast('account-viewer.transaction-success');
@@ -295,7 +358,7 @@ export default class SendWidgetController {
         this.horizonResponse = JSON.stringify(e, null, '  ');
       })
       .finally(() => {
-        this.showView('sendOutcome');
+        this.showView(null, 'sendOutcome');
         this.$scope.$apply()
       });
   }

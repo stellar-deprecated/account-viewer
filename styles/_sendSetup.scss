@@ -40,7 +40,7 @@
     padding: 0 1em;
     background: $s-color-neutral8;
   }
-  .sendSetup__error {
+  .sendSetup__error, .sendSetup__info {
     margin-top: -0.5em;
     margin-bottom: 1em;
   }
@@ -81,8 +81,18 @@
     align-self: stretch;
     border: 0;
     padding: $so-inputPadding;
+    background: transparent; // Transparent so that the parent color can show
   }
   .sendSetup__memo__memoSetup__input {
     @include S-flexItem-share;
     border-radius: 0 $s-var-radius $s-var-radius 0;
+  }
+
+  .sendSetup__memo__memoSetup__selectTag.is-disabled,
+  .sendSetup__memo__memoSetup__input.is-disabled {
+    background: $s-color-neutral8;
+  }
+  .sendSetup__memo__memoSetup__selectTag__select.is-disabled,
+  .sendSetup__memo__memoSetup__input.is-disabled {
+    cursor: not-allowed;
   }

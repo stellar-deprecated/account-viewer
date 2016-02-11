@@ -3,8 +3,14 @@
   <div class="sendSetup" ng-if="widget.view == 'sendSetup'">
     <p class="sendSetup__titleBar">To</p>
     <div class="sendSetup__destination">
-
-      <input ng-model="widget.destinationAddress" class="sendSetup__destination__input" ng-class="{'s-inputAlert--alert': widget.addressAlerts.length > 0}" placeholder="Recipient's public key" type="text">
+      <input ng-model="widget.destinationAddress" ng-blur="widget.loadDestination($event);" class="sendSetup__destination__input" ng-class="{'s-inputAlert--alert': widget.addressAlerts.length > 0}" placeholder="Recipient's public key or address" type="text">
+    </div>
+    <div class="s-alert s-alert--info sendSetup__info" ng-if="widget.loadingDestination">
+      Loading federation info...
+    </div>
+    <div class="s-alert s-alert--info sendSetup__info" ng-if="!widget.loadingDestination && widget.stellarAddress">
+      Stellar address: <code>{{widget.stellarAddress}}</code>
+      resolved to: <code>{{widget.destination}}</code>
     </div>
     <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.addressAlerts.length > 0">
       <span ng-repeat="alert in widget.addressAlerts">
@@ -25,10 +31,9 @@
       </span>
     </div>
 
-
     <div class="sendSetup__memo">
       <p class="sendSetup__titleBar" ng-if="!widget.memo">
-        <a href="#" ng-click="widget.showMemo($event);">Add memo</a>
+        <a href="#" ng-if="!widget.memoBlocked" ng-click="widget.showMemo($event);">Add memo</a>
         <span href="" class="sendSetup__titleBar__side">
           <a href="https://www.stellar.org/developers/learn/concepts/transactions.html" target="_blank">what's a memo?</a>
         </span>
@@ -37,22 +42,36 @@
         <p class="sendSetup__titleBar">Memo
           <span href="" class="sendSetup__titleBar__side">
             <a href="https://www.stellar.org/developers/learn/concepts/transactions.html" target="_blank">what's a memo?</a>
-             |
-            <a href="#" ng-click="widget.hideMemo($event);">cancel</a>
+            <span ng-if="!widget.memoBlocked"> |
+              <a href="#" ng-click="widget.hideMemo($event);">cancel</a>
+            </span>
           </span>
         </p>
         <div class="s-inputGroup sendSetup__memo__memoSetup">
-          <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag">
-            <select ng-model="widget.memoType" class="sendSetup__memo__memoSetup__selectTag__select">
+          <span
+            class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag"
+            ng-class="{'is-disabled': widget.memoBlocked}">
+            <select ng-model="widget.memoType" ng-disabled="widget.memoBlocked"
+              class="sendSetup__memo__memoSetup__selectTag__select"
+              ng-class="{'is-disabled': widget.memoBlocked}">
               <option>MEMO_TEXT</option>
               <option>MEMO_ID</option>
               <option>MEMO_HASH</option>
               <option>MEMO_RETURN</option>
             </select>
           </span>
-          <input ng-model="widget.memoValue" class="sendSetup__memo__memoSetup__input" ng-class="{'s-inputAlert--alert': widget.memoAlerts.length > 0}" placeholder="{{widget.memoPlaceholder}}" type="text">
+          <input ng-model="widget.memoValue"
+            ng-disabled="widget.memoBlocked"
+            class="sendSetup__memo__memoSetup__input"
+            ng-class="{'s-inputAlert--alert': widget.memoAlerts.length > 0, 'is-disabled': widget.memoBlocked}"
+            placeholder="{{widget.memoPlaceholder}}" type="text">
         </div>
       </div>
+    </div>
+    <div ng-if="widget.memoBlocked"  class="s-alert s-alert--info sendSetup__info">
+      <span>
+        <strong>Note</strong>: The specified federation address requires this transaction's memo to be a certain value.
+      </span>
     </div>
     <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.memoAlerts.length > 0">
       <span ng-repeat="alert in widget.memoAlerts">
@@ -60,12 +79,12 @@
       </span>
     </div>
 
-    <button class="s-button sendSetup__submit" ng-class="{'is-disabled': widget.sending}" ng-disabled="widget.sending" type="submit" ng-click="widget.send()">Send lumens</button>
+    <button class="s-button sendSetup__submit" ng-class="{'is-disabled': widget.sending || widget.loadingDestination}" ng-disabled="widget.sending || widget.loadingDestination" type="submit" ng-click="widget.send()">Send lumens</button>
   </div>
 
   <div class="sendConfirm" ng-if="widget.view == 'sendConfirm'">
     <p class="sendConfirm__addressLabel">You're sending to this public key:</p>
-    <p class="sendConfirm__address">{{widget.destinationAddress}}</p>
+    <p class="sendConfirm__address">{{widget.destination}}</p>
 
     <div class="sendConfirm__sendingContainer">
       <div class="sendConfirm__sendingContainer__label">Sending</div>
@@ -87,7 +106,7 @@
 
     <button class="s-button sendConfirm__submit" ng-click="widget.confirm()">Submit transaction</button>
 
-    <a href="#" class="sendConfirm__edit" ng-click="widget.showView('sendSetup')">← Edit</a>
+    <a href="#" class="sendConfirm__edit" ng-click="widget.showView($event, 'sendSetup')">← Edit</a>
   </div>
 
   <div class="sendWaiting" ng-if="widget.view == 'sendWaiting'">
@@ -107,6 +126,6 @@
       <pre class="sendOutcome__code"><code>{{widget.horizonResponse}}</code></pre>
     </div>
 
-    <button class="s-button sendOutcome__return" ng-click="widget.showView('sendSetup')">Send another transaction</button>
+    <button class="s-button sendOutcome__return" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
   </div>
 </div>
