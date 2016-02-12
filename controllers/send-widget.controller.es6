@@ -70,6 +70,21 @@ export default class SendWidgetController {
 
   loadDestination($event) {
     this.loadingDestination = true;
+    this.addressAlertGroup.clear();
+
+    let resetState = () => {
+      this.destination = null;
+      this.stellarAddress = null;
+      this.loadingDestination = false;
+      this.memoBlocked = false;
+      this.hideMemo();
+    };
+
+    if (!this.destinationAddress) {
+      resetState();
+      return;
+    }
+
     FederationServer.resolve(this.destinationAddress)
       .then(value => {
         this.destination = value.account_id;
@@ -105,14 +120,26 @@ export default class SendWidgetController {
           this.hideMemo();
         }
         this.loadingDestination = false;
+        this.$scope.$apply();
       })
       .catch(error => {
-        console.log(error);
-        this.destination = null;
-        this.stellarAddress = null;
-        this.loadingDestination = false;
-        this.memoBlocked = false;
-        this.hideMemo();
+        let alert;
+        if (this.destinationAddress.indexOf('*') < 0) {
+          alert = new Alert({
+            title: 'Invalid public key.',
+            text: 'Public keys are uppercase and begin with the letter "G."',
+            type: Alert.TYPES.ERROR
+          });
+        } else {
+          alert = new Alert({
+            title: 'Stellar address cannot be found or is invalid.',
+            text: '',
+            type: Alert.TYPES.ERROR
+          });
+        }
+        this.addressAlertGroup.show(alert);
+        resetState();
+        this.$scope.$apply();
       });
   }
 
@@ -152,7 +179,7 @@ export default class SendWidgetController {
 
     if (!Account.isValidAccountId(this.destination)) {
       let alert = new Alert({
-        title: 'Invalid public key.',
+        title: 'Stellar address or public key is invalid.',
         text: 'Public keys are uppercase and begin with the letter "G."',
         type: Alert.TYPES.ERROR
       });
