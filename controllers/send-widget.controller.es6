@@ -40,7 +40,7 @@ export default class SendWidgetController {
           break;
         case 'MEMO_HASH':
         case 'MEMO_RETURN':
-          this.memoPlaceholder = 'Enter encoded string';
+          this.memoPlaceholder = 'Enter 64 character encoded string';
           break;
       }
     });
