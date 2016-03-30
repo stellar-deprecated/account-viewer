@@ -35,40 +35,42 @@
       <p class="sendSetup__titleBar" ng-if="!widget.memo">
         <a href="#" ng-if="!widget.memoBlocked" ng-click="widget.showMemo($event);">Add memo</a>
         <span href="" class="sendSetup__titleBar__side">
-          <a href="https://www.stellar.org/developers/learn/concepts/transactions.html" target="_blank">what's a memo?</a>
+          <a href="https://www.stellar.org/developers/learn/concepts/transactions.html#memo" target="_blank">what's a memo?</a>
         </span>
       </p>
       <div ng-if="widget.memo">
         <p class="sendSetup__titleBar">Memo
           <span href="" class="sendSetup__titleBar__side">
-            <a href="https://www.stellar.org/developers/learn/concepts/transactions.html" target="_blank">what's a memo?</a>
+            <a href="https://www.stellar.org/developers/learn/concepts/transactions.html#memo" target="_blank">what's a memo?</a>
             <span ng-if="!widget.memoBlocked"> |
               <a href="#" ng-click="widget.hideMemo($event);">cancel</a>
             </span>
           </span>
         </p>
         <div class="s-inputGroup sendSetup__memo__memoSetup">
-          <span
-            class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag"
-            ng-class="{'is-disabled': widget.memoBlocked}">
-            <select ng-model="widget.memoType" ng-disabled="widget.memoBlocked"
-              class="sendSetup__memo__memoSetup__selectTag__select"
+          <div class="so-dropdown sendSetup__memo__memoSetup__dropdown">
+            <span
+              class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag"
               ng-class="{'is-disabled': widget.memoBlocked}">
-              <option>MEMO_TEXT</option>
-              <option>MEMO_ID</option>
-              <option>MEMO_HASH</option>
-              <option>MEMO_RETURN</option>
-            </select>
-          </span>
+              <select ng-model="widget.memoType" ng-disabled="widget.memoBlocked"
+                class="sendSetup__memo__memoSetup__selectTag__select so-dropdown__select"
+                ng-class="{'is-disabled': widget.memoBlocked}">
+                <option>MEMO_TEXT</option>
+                <option>MEMO_ID</option>
+                <option>MEMO_HASH</option>
+                <option>MEMO_RETURN</option>
+              </select>
+            </span>
+          </div>
           <input ng-model="widget.memoValue"
             ng-disabled="widget.memoBlocked"
             class="sendSetup__memo__memoSetup__input"
             ng-class="{'s-inputAlert--alert': widget.memoAlerts.length > 0, 'is-disabled': widget.memoBlocked}"
-            placeholder="{{widget.memoPlaceholder}}" type="text">
+            placeholder="{{widget.memoPlaceholder}}" type="text" />
         </div>
       </div>
     </div>
-    <div ng-if="widget.memoBlocked"  class="s-alert s-alert--info sendSetup__info">
+    <div ng-if="widget.memoBlocked" class="s-alert s-alert--info sendSetup__info">
       <span>
         <strong>Note</strong>: The specified federation address requires this transaction's memo to be a certain value.
       </span>
