@@ -18,6 +18,7 @@ export default class BalanceWidgetController {
     this.address = session.getAddress();
     this.balanceLoaded = false;
     this.showRefreshButton = false;
+    this.accountNotFound = false;
 
     Server.accounts()
       .accountId(this.address)
@@ -46,6 +47,7 @@ export default class BalanceWidgetController {
       .then(account => this.onBalanceChange.call(this, account.balances))
       .catch(e => {
         if (e.name === 'NotFoundError') {
+          this.accountNotFound = true;
           this.onBalanceChange.call(this, null);
         } else {
           throw e;
