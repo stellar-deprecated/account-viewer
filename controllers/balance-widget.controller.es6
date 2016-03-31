@@ -37,6 +37,8 @@ export default class BalanceWidgetController {
       this.$rootScope.$on('account-viewer.transaction-success', () => {
         this.loadAccount();
       });
+    } else {
+      this.loadAccount();
     }
   }
 
@@ -47,7 +49,6 @@ export default class BalanceWidgetController {
       .then(account => this.onBalanceChange.call(this, account.balances))
       .catch(e => {
         if (e.name === 'NotFoundError') {
-          this.accountNotFound = true;
           this.onBalanceChange.call(this, null);
         } else {
           throw e;
@@ -56,6 +57,12 @@ export default class BalanceWidgetController {
   }
 
   onBalanceChange(balances) {
+    if (balances === null) {
+        this.accountNotFound = true;
+    } else {
+        this.accountNotFound = false;
+    }
+
     let balance;
     if (_.isArray(balances) && balances.length > 0) {
       let nativeBalance = _(balances).find(balance => balance.asset_type === 'native');
