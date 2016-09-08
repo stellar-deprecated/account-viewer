@@ -186,15 +186,6 @@ export default class SendWidgetController {
       this.addressAlertGroup.show(alert);
     }
 
-    if (this.destination && this.destination === this.session.address) {
-      let alert = new Alert({
-        title: 'Can\'t send to yourself.',
-        text: "Enter a different public key.",
-        type: Alert.TYPES.ERROR
-      });
-      this.addressAlertGroup.show(alert);
-    }
-
     // Check if amount is valid
     if (!Operation.isValidAmount(this.amount)) {
       let alert = new Alert({
