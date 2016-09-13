@@ -31,6 +31,14 @@ export default class LoginController {
     );
   }
 
+  generate() {
+    let keypair = Keypair.random();
+    this.newKeypair = {
+      publicKey: keypair.accountId(),
+      secretKey: keypair.seed()
+    };
+  }
+
   submit() {
     this.alertGroup.clear();
     this.processing = true;

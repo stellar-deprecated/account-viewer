@@ -29,6 +29,16 @@
 
       <button type="submit" class="s-button loginBox__submit" ng-class="{'is-disabled': login.processing}" ng-disabled="login.processing">Sign in</button>
     </form>
+    <div class="middleBox">
+        Generate key pair for a new account
+        <div class="keypair" ng-if="login.newKeypair">
+        Public Key:<br />
+        <code>{{login.newKeypair.publicKey}}</code><br />
+        Secret Key:<br />
+        <code>{{login.newKeypair.secretKey}}</code>
+        </div>
+        <button type="button" class="s-button loginBox__submit" ng-click="login.generate()">Generate</button>
+    </div>
     <div class="legacyBox">
       Looking for legacy login? <a href="https://launch.stellar.org/">Proceed here &raquo;</a>
     </div>
