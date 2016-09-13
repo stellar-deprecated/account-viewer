@@ -3,11 +3,7 @@
   "modules": {
     "interstellar-network": {
       "networkPassphrase": "Public Global Stellar Network ; September 2015",
-      "horizon": {
-        "secure": true,
-        "hostname": "horizon.stellar.org",
-        "port": 443
-      }
+      "horizon": "https://horizon.stellar.org"
     }
   }
 }

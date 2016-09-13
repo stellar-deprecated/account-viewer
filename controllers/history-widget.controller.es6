@@ -19,8 +19,7 @@ export default class HistoryWidgetController {
     this.loading = true;
     this.showLengthLimitAlert = false;
 
-    this.loadPayments()
-      .then(() => this.setupSteaming());
+    this.loadPayments();
   }
 
   loadPayments() {
@@ -37,9 +36,15 @@ export default class HistoryWidgetController {
         if (this.payments.length >= 100) {
           this.showLengthLimitAlert = true;
         }
+
+        this.setupSteaming();
       })
       .catch(e => {
-        if (e.name !== 'NotFoundError') {
+        if (e.name === 'NotFoundError') {
+          setTimeout(() => {
+            this.loadPayments();
+          }, 10*1000);
+        } else {
           throw e;
         }
       })

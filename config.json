@@ -3,11 +3,7 @@
   "modules": {
     "interstellar-network": {
       "networkPassphrase": "Test SDF Network ; September 2015",
-      "horizon": {
-        "secure": true,
-        "hostname": "horizon-testnet.stellar.org",
-        "port": 443
-      }
+      "horizon": "https://horizon-testnet.stellar.org"
     }
   }
 }
