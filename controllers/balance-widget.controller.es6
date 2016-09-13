@@ -18,6 +18,7 @@ export default class BalanceWidgetController {
     this.address = session.getAddress();
     this.balanceLoaded = false;
     this.showRefreshButton = false;
+    this.accountNotFound = false;
 
     Server.accounts()
       .accountId(this.address)
@@ -36,6 +37,8 @@ export default class BalanceWidgetController {
       this.$rootScope.$on('account-viewer.transaction-success', () => {
         this.loadAccount();
       });
+    } else {
+      this.loadAccount();
     }
   }
 
@@ -54,6 +57,12 @@ export default class BalanceWidgetController {
   }
 
   onBalanceChange(balances) {
+    if (balances === null) {
+        this.accountNotFound = true;
+    } else {
+        this.accountNotFound = false;
+    }
+
     let balance;
     if (_.isArray(balances) && balances.length > 0) {
       let nativeBalance = _(balances).find(balance => balance.asset_type === 'native');
