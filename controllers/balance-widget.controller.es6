@@ -3,9 +3,9 @@ import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')
-@Inject("$scope", "$rootScope", "interstellar-sessions.Sessions", "interstellar-network.Server")
+@Inject("$scope", "$http", "$rootScope", "interstellar-core.Config", "interstellar-sessions.Sessions", "interstellar-network.Server")
 export default class BalanceWidgetController {
-  constructor($scope, $root$Scope, Sessions, Server) {
+  constructor($scope, $http, $root$Scope, Config, Sessions, Server) {
     if (!Sessions.hasDefault()) {
       console.error('No session. This widget should be used with active session.');
       return;
@@ -26,6 +26,34 @@ export default class BalanceWidgetController {
         onmessage: account => this.onBalanceChange.call(this, account.balances),
         onerror: error => {
           this.onStreamError.call(this, error)
+        }
+      });
+
+    Server.operations()
+      .forAccount(this.address)
+      .call()
+      .then(operations => {
+        if (operations.records.length <= 1) {
+          $http({
+            method: 'GET',
+            url: Config.get("inviteServer")+'/account-viewer/check?id='+this.address
+          }).then(response => {
+            this.invite = response.data;
+
+            if (this.invite.state == "queued") {
+              var claimedAt = new Date(this.invite.claimed_at);
+              var days = 7-Math.floor((new Date() - claimedAt) / (1000*60*60*24));
+              var daysString;
+              if (days <= 0) {
+                 daysString = "less than a day";
+              } else if (days == 1) {
+                daysString = "1 day";
+              } else {
+                daysString = days+" days";
+              }
+              this.invite.days = daysString;
+            }
+          }, response => {});
         }
       });
   }
