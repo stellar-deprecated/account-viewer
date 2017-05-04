@@ -1,4 +1,5 @@
 {
+  "inviteServer": "http://localhost:8002",
   "permanentSession": true,
   "modules": {
     "interstellar-network": {
