@@ -33,7 +33,7 @@ export default class BalanceWidgetController {
       .forAccount(this.address)
       .call()
       .then(operations => {
-        if (operations.records.length <= 1) {
+        if (operations.records.length <= 2) {
           $http({
             method: 'GET',
             url: Config.get("inviteServer")+'/account-viewer/check?id='+this.address
