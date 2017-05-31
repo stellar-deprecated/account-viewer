@@ -3,22 +3,26 @@ import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')
-@Inject("$scope", "$http", "$rootScope", "interstellar-core.Config", "interstellar-sessions.Sessions", "interstellar-network.Server")
+@Inject("$scope", "$rootScope", "$http", "interstellar-core.Config", "interstellar-sessions.Sessions", "interstellar-network.Server")
 export default class BalanceWidgetController {
-  constructor($scope, $http, $root$Scope, Config, Sessions, Server) {
+  constructor($scope, $rootScope, $http, Config, Sessions, Server) {
     if (!Sessions.hasDefault()) {
       console.error('No session. This widget should be used with active session.');
       return;
     }
 
     this.$scope = $scope;
-    this.$rootScope = $root$Scope;
+    this.$rootScope = $rootScope;
     this.Server = Server;
     let session = Sessions.default;
     this.address = session.getAddress();
     this.balanceLoaded = false;
     this.showRefreshButton = false;
     this.accountNotFound = false;
+
+    this.$rootScope.$on('account-viewer.transaction-success', () => {
+      this.invite = null;
+    });
 
     Server.accounts()
       .accountId(this.address)
@@ -33,6 +37,7 @@ export default class BalanceWidgetController {
       .forAccount(this.address)
       .call()
       .then(operations => {
+        // Merged_back = 2ops: create_account, account_merge
         if (operations.records.length <= 2) {
           $http({
             method: 'GET',
@@ -41,6 +46,12 @@ export default class BalanceWidgetController {
             this.invite = response.data;
 
             if (this.invite.state == "queued") {
+              // Not `merged_back` and operations.records.length > 1 = transaction sent
+              if (operations.records.length > 1) {
+                this.invite = null;
+                return;
+              }
+
               var claimedAt = new Date(this.invite.claimed_at);
               var days = 7-Math.floor((new Date() - claimedAt) / (1000*60*60*24));
               var daysString;
