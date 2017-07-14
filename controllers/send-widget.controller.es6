@@ -77,7 +77,9 @@ export default class SendWidgetController {
       this.stellarAddress = null;
       this.loadingDestination = false;
       this.memoBlocked = false;
-      this.hideMemo();
+      if (!this.memoValue) {
+        this.hideMemo();
+      }
     };
 
     if (!this.destinationAddress) {
@@ -117,7 +119,9 @@ export default class SendWidgetController {
           this.memoBlocked = true;
         } else {
           this.memoBlocked = false;
-          this.hideMemo();
+          if (!this.memoValue) {
+            this.hideMemo();
+          }
         }
         this.loadingDestination = false;
         this.$scope.$apply();
