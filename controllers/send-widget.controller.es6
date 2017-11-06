@@ -2,9 +2,10 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import {Widget, Inject, Intent} from 'interstellar-core';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import {Account, Asset, Keypair, Memo, Operation, TransactionBuilder} from 'stellar-base';
+import {Account, Asset, Keypair, Memo, Operation, TransactionBuilder, xdr} from 'stellar-base';
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
+import StellarLedger from 'stellar-ledger-api';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
 @Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
@@ -333,6 +334,7 @@ export default class SendWidgetController {
   }
 
   _submitTransaction(operation) {
+
     return this.Sessions.loadDefaultAccount()
       .then(() => {
         let memo = Memo.none();
@@ -359,9 +361,27 @@ export default class SendWidgetController {
           .addMemo(memo)
           .build();
 
-        transaction.sign(Keypair.fromSeed(this.session.getSecret()));
+        let useLedger = this.session.data && this.session.data['ledger'];
 
-        return this.Server.submitTransaction(transaction);
+        if (useLedger) {
+          let address = this.session.address;
+          let self = this;
+
+          return StellarLedger.comm.create_async().then(function (comm) {
+            let api = new StellarLedger.Api(comm);
+            return api.signTx_async("44'/148'/0'", address, transaction).then(function (result) {
+              let signature = result['signature'];
+              let keyPair = Keypair.fromAccountId(address);
+              let hint = keyPair.signatureHint();
+              let decorated = new xdr.DecoratedSignature({hint, signature});
+              transaction.signatures.push(decorated);
+              return self.Server.submitTransaction(transaction);
+            });
+          });
+        } else {
+          transaction.sign(Keypair.fromSeed(this.session.getSecret()));
+          return this.Server.submitTransaction(transaction);
+        }
       })
       .then(() => {
         this.success = true;

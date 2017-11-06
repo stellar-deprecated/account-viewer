@@ -2,6 +2,7 @@ import {Intent} from "interstellar-core";
 import {Controller, Inject} from "interstellar-core";
 import {Keypair} from 'stellar-base';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
+import StellarLedger from 'stellar-ledger-api';
 
 @Controller("LoginController")
 @Inject("$scope", "interstellar-core.Config", "interstellar-core.IntentBroadcast", "interstellar-sessions.Sessions", "interstellar-ui-messages.Alerts")
@@ -20,6 +21,8 @@ export default class LoginController {
     this.alertGroup.registerUpdateListener(alerts => {
       this.alerts = alerts;
     });
+    this.ledgerStatus = 'Not connected';
+    this.connectLedger();
     Alerts.registerGroup(this.alertGroup);
   }
 
@@ -29,6 +32,42 @@ export default class LoginController {
         Intent.TYPES.SHOW_DASHBOARD
       )
     );
+  }
+
+  connectLedger() {
+      let self = this;
+      StellarLedger.comm.create_async().then(function (comm) {
+        let api = new StellarLedger.Api(comm);
+        api.getPublicKey_async("44'/148'/0'", true, false).then(function (result) {
+          self.ledgerAddress = result['publicKey'];
+          self.ledgerStatus = 'Connected';
+          self.$scope.$apply();
+        }).catch(function (err) {
+          if (err.errorCode === 5) {
+            console.log('Timeout; retry');
+            self.connectLedger();
+          } else {
+            if (err === 'Invalid status 6801') {
+              self.ledgerStatus = 'Asleep';
+              self.$scope.$apply();
+            } else {
+              console.log('Unable to connect ledger: ' + err);
+            }
+          }
+        });
+      }).catch(function (err) {
+        console.log('Unable to connect ledger' + err);
+      });
+  }
+
+  proceedWithLedger() {
+    let permanent = this.Config.get("permanentSession");
+    let data = { ledger: true };
+    let address = this.ledgerAddress;
+    this.Sessions.createDefault({address, data, permanent})
+      .then(() => {
+        this.broadcastShowDashboardIntent();
+      });
   }
 
   generate() {
