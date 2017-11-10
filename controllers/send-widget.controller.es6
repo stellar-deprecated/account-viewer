@@ -8,9 +8,9 @@ import BasicClientError from '../errors';
 import StellarLedger from 'stellar-ledger-api';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
-@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
+@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts", "interstellar-core.IntentBroadcast")
 export default class SendWidgetController {
-  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts) {
+  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts, IntentBroadcast) {
     if (!Sessions.hasDefault()) {
       console.error('No session');
       return;
@@ -67,6 +67,40 @@ export default class SendWidgetController {
       this.memoAlerts = alerts;
     });
     Alerts.registerGroup(this.memoAlertGroup);
+
+    this.IntentBroadcast = IntentBroadcast;
+    this.ready = true;
+    this.useLedger = this.session.data && this.session.data['useLedger'];
+    if (this.useLedger) {
+      this.initializeLedger();
+    }
+    this.IntentBroadcast.registerReceiver(Intent.TYPES.LOGOUT, () => {
+      this.stopLedgerMonitor();
+    });
+  }
+
+  initializeLedger() {
+    let self = this;
+    StellarLedger.comm.create_async().then(function (comm) {
+      self.ledgerApi = new StellarLedger.Api(comm);
+      self.ledgerApi.addDeviceListener(function(status, msg) {
+        self.ready = (status === 'Connected');
+        if (status === 'Timeout') {
+          status = 'Not connected';
+        }
+        if (msg) {
+          status = status + ': ' + msg;
+        }
+        self.ledgerStatus = status;
+        self.$scope.$apply();
+      });
+    }).catch(function (err) {
+      self.ledgerStatus = 'Error: ' + err;
+    });
+  }
+
+  stopLedgerMonitor() {
+    this.ledgerApi.clearDeviceListeners();
   }
 
   loadDestination($event) {
@@ -361,27 +395,26 @@ export default class SendWidgetController {
           .addMemo(memo)
           .build();
 
-        let useLedger = this.session.data && this.session.data['ledger'];
-
-        if (useLedger) {
+        if (this.useLedger) {
           let address = this.session.address;
           let self = this;
-
           return StellarLedger.comm.create_async().then(function (comm) {
             let api = new StellarLedger.Api(comm);
-            return api.signTx_async("44'/148'/0'", address, transaction).then(function (result) {
+            return api.signTx_async("44'/148'/0'", address, transaction).then(result => {
               let signature = result['signature'];
               let keyPair = Keypair.fromAccountId(address);
               let hint = keyPair.signatureHint();
               let decorated = new xdr.DecoratedSignature({hint, signature});
               transaction.signatures.push(decorated);
-              return self.Server.submitTransaction(transaction);
+            }).catch(e => {
+              self.ledgerError = e;
+              throw e;
             });
           });
         } else {
           transaction.sign(Keypair.fromSeed(this.session.getSecret()));
-          return this.Server.submitTransaction(transaction);
         }
+        return this.Server.submitTransaction(transaction);
       })
       .then(() => {
         this.success = true;
@@ -393,7 +426,11 @@ export default class SendWidgetController {
       })
       .catch(e => {
         this.success = false;
-        this.horizonResponse = JSON.stringify(e, null, '  ');
+        if (this.ledgerError !== null) {
+          this.outcomeMessage = this.ledgerError;
+        } else {
+          this.outcomeMessage = JSON.stringify(e, null, '  ');
+        }
       })
       .finally(() => {
         this.showView(null, 'sendOutcome');

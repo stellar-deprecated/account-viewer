@@ -1,4 +1,7 @@
 <div class="sendPane" ng-controller="interstellar-basic-client.SendWidgetController as widget">
+  <div ng-if="widget.useLedger">
+    Ledger Status: <span>{{widget.ledgerStatus}}</span>
+  </div>
   <h2 class="sendPane__title">Send lumens</h2>
   <div class="sendSetup" ng-if="widget.view == 'sendSetup'">
     <p class="sendSetup__titleBar">To</p>
@@ -106,7 +109,10 @@
       </div>
     </div>
 
-    <button class="s-button sendConfirm__submit" ng-click="widget.confirm()">Submit transaction</button>
+    <div ng-if="widget.useLedger">
+      Ledger Status: <span>{{widget.ledgerStatus}}</span>
+    </div>
+    <button class="s-button sendConfirm__submit" ng-click="widget.confirm()" ng-disabled="!widget.ready">Submit transaction</button>
 
     <a href="#" class="sendConfirm__edit" ng-click="widget.showView($event, 'sendSetup')">← Edit</a>
   </div>
@@ -125,7 +131,7 @@
     <div ng-if="!widget.success">
       <p class="sendOutcome__label">Transaction failed</p>
 
-      <pre class="sendOutcome__code"><code>{{widget.horizonResponse}}</code></pre>
+      <pre class="sendOutcome__code"><code>{{widget.outcomeMessage}}</code></pre>
     </div>
 
     <button class="s-button sendOutcome__return" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
