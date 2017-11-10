@@ -69,7 +69,7 @@ export default class SendWidgetController {
     Alerts.registerGroup(this.memoAlertGroup);
 
     this.IntentBroadcast = IntentBroadcast;
-    this.ready = true;
+    this.transactionReady = true;
     this.useLedger = this.session.data && this.session.data['useLedger'];
     if (this.useLedger) {
       this.initializeLedger();
@@ -84,7 +84,7 @@ export default class SendWidgetController {
     StellarLedger.comm.create_async().then(function (comm) {
       self.ledgerApi = new StellarLedger.Api(comm);
       self.ledgerApi.addDeviceListener(function(status, msg) {
-        self.ready = (status === 'Connected');
+        self.transactionReady = (status === 'Connected');
         if (status === 'Timeout') {
           status = 'Not connected';
         }
@@ -398,23 +398,21 @@ export default class SendWidgetController {
         if (this.useLedger) {
           let address = this.session.address;
           let self = this;
-          return StellarLedger.comm.create_async().then(function (comm) {
-            let api = new StellarLedger.Api(comm);
-            return api.signTx_async("44'/148'/0'", address, transaction).then(result => {
-              let signature = result['signature'];
-              let keyPair = Keypair.fromAccountId(address);
-              let hint = keyPair.signatureHint();
-              let decorated = new xdr.DecoratedSignature({hint, signature});
-              transaction.signatures.push(decorated);
-            }).catch(e => {
-              self.ledgerError = e;
-              throw e;
-            });
+          return this.ledgerApi.signTx_async("44'/148'/0'", address, transaction).then(result => {
+            let signature = result['signature'];
+            let keyPair = Keypair.fromAccountId(address);
+            let hint = keyPair.signatureHint();
+            let decorated = new xdr.DecoratedSignature({hint, signature});
+            transaction.signatures.push(decorated);
+            self.Server.submitTransaction(transaction);
+          }).catch(e => {
+            self.ledgerError = e;
+            throw e;
           });
         } else {
           transaction.sign(Keypair.fromSeed(this.session.getSecret()));
+          return this.Server.submitTransaction(transaction);
         }
-        return this.Server.submitTransaction(transaction);
       })
       .then(() => {
         this.success = true;
