@@ -80,22 +80,20 @@ export default class SendWidgetController {
   }
 
   initializeLedger() {
+    this.bip32Path = this.session.data['bip32Path'];
+    console.log(this.bip32Path);
+    this.ledgerApi = new StellarLedger.Api(new StellarLedger.comm(3));
     let self = this;
-    StellarLedger.comm.create_async().then(function (comm) {
-      self.ledgerApi = new StellarLedger.Api(comm);
-      self.ledgerApi.addDeviceListener(function(status, msg) {
-        self.transactionReady = (status === 'Connected');
-        if (status === 'Timeout') {
-          status = 'Not connected';
-        }
-        if (msg) {
-          status = status + ': ' + msg;
-        }
-        self.ledgerStatus = status;
-        self.$scope.$apply();
-      });
-    }).catch(function (err) {
-      self.ledgerStatus = 'Error: ' + err;
+    this.ledgerApi.addDeviceListener(function(status, msg){
+      self.transactionReady = (status === 'Connected');
+      if (status === 'Timeout') {
+        status = 'Not connected';
+      }
+      if (msg) {
+        status = status + ': ' + msg;
+      }
+      self.ledgerStatus = status;
+      self.$scope.$apply();
     });
   }
 
@@ -398,7 +396,9 @@ export default class SendWidgetController {
         if (this.useLedger) {
           let address = this.session.address;
           let self = this;
-          return this.ledgerApi.signTx_async("44'/148'/0'", address, transaction).then(result => {
+          // dedicated comm channel for extended timeout
+          let ledgerApi = new StellarLedger.Api(new StellarLedger.comm(120));
+          return ledgerApi.signTx_async(this.bip32Path, address, transaction).then(result => {
             let signature = result['signature'];
             let keyPair = Keypair.fromAccountId(address);
             let hint = keyPair.signatureHint();

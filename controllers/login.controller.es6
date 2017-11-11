@@ -27,7 +27,7 @@ export default class LoginController {
   }
 
   broadcastShowDashboardIntent() {
-   this.ledgerApi.clearDeviceListeners();
+    this.ledgerApi.clearDeviceListeners();
     this.IntentBroadcast.sendBroadcast(
       new Intent(
         Intent.TYPES.SHOW_DASHBOARD
@@ -36,29 +36,26 @@ export default class LoginController {
   }
 
   connectLedger() {
+    this.ledgerApi = new StellarLedger.Api(new StellarLedger.comm(3));
     let self = this;
-    StellarLedger.comm.create_async().then(function (comm) {
-      self.ledgerApi = new StellarLedger.Api(comm);
-      self.ledgerApi.addDeviceListener(function(status, msg) {
-        if (status === 'Timeout') {
-          status = 'Not connected';
-        }
-        if (msg) {
-          status = status + ': ' + msg;
-        }
-        self.ledgerStatus = status;
-        self.$scope.$apply();
-      });
-    }).catch(function (err) {
-      self.ledgerStatus = 'Error: ' + err;
+    this.ledgerApi.addDeviceListener(function(status, msg) {
+      if (status === 'Timeout') {
+        status = 'Not connected';
+      }
+      if (msg) {
+        status = status + ': ' + msg;
+      }
+      self.ledgerStatus = status;
+      self.$scope.$apply();
     });
   }
 
   proceedWithLedger() {
+    let bip32Path = "44'/148'/0'";
     let self = this;
-    self.ledgerApi.getPublicKey_async("44'/148'/0'").then(function(result) {
+    self.ledgerApi.getPublicKey_async(bip32Path).then(function(result) {
       let permanent = self.Config.get("permanentSession");
-      let data = { useLedger: true };
+      let data = { useLedger: true, bip32Path };
       let address = result['publicKey'];
       self.Sessions.createDefault({address, data, permanent})
           .then(() => {
