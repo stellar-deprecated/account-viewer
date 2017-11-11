@@ -81,7 +81,6 @@ export default class SendWidgetController {
 
   initializeLedger() {
     this.bip32Path = this.session.data['bip32Path'];
-    console.log(this.bip32Path);
     this.ledgerApi = new StellarLedger.Api(new StellarLedger.comm(3));
     let self = this;
     this.ledgerApi.addDeviceListener(function(status, msg){
