@@ -82,17 +82,16 @@ export default class SendWidgetController {
   initializeLedger() {
     this.bip32Path = this.session.data['bip32Path'];
     this.ledgerApi = new StellarLedger.Api(new StellarLedger.comm(3));
-    let self = this;
-    this.ledgerApi.addDeviceListener(function(status, msg){
-      self.transactionReady = (status === 'Connected');
+    this.ledgerApi.addDeviceListener((status, msg) => {
+      this.transactionReady = (status === 'Connected');
       if (status === 'Timeout') {
         status = 'Not connected';
       }
       if (msg) {
         status = status + ': ' + msg;
       }
-      self.ledgerStatus = status;
-      self.$scope.$apply();
+      this.ledgerStatus = status;
+      this.$scope.$apply();
     });
   }
 
@@ -393,19 +392,17 @@ export default class SendWidgetController {
           .build();
 
         if (this.useLedger) {
-          let address = this.session.address;
-          let self = this;
           // dedicated comm channel for extended timeout
           let ledgerApi = new StellarLedger.Api(new StellarLedger.comm(120));
           return ledgerApi.signTx_async(this.bip32Path, transaction).then(result => {
             let signature = result['signature'];
-            let keyPair = Keypair.fromAccountId(address);
+            let keyPair = Keypair.fromAccountId(this.session.address);
             let hint = keyPair.signatureHint();
             let decorated = new xdr.DecoratedSignature({hint, signature});
             transaction.signatures.push(decorated);
-            self.Server.submitTransaction(transaction);
+            this.Server.submitTransaction(transaction);
           }).catch(e => {
-            self.ledgerError = e;
+            this.ledgerError = e;
             throw e;
           });
         } else {
