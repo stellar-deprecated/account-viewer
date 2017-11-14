@@ -397,7 +397,7 @@ export default class SendWidgetController {
           let self = this;
           // dedicated comm channel for extended timeout
           let ledgerApi = new StellarLedger.Api(new StellarLedger.comm(120));
-          return ledgerApi.signTx_async(this.bip32Path, address, transaction).then(result => {
+          return ledgerApi.signTx_async(this.bip32Path, transaction).then(result => {
             let signature = result['signature'];
             let keyPair = Keypair.fromAccountId(address);
             let hint = keyPair.signatureHint();
