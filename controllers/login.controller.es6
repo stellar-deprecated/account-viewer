@@ -29,7 +29,7 @@ export default class LoginController {
   }
 
   broadcastShowDashboardIntent() {
-    if (this.ledgerApi !== 'undefined') {
+    if (typeof this.ledgerApi !== 'undefined') {
       this.ledgerApi.clearDeviceListeners();
     }
     this.IntentBroadcast.sendBroadcast(
