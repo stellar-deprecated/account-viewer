@@ -33,9 +33,6 @@ export default class LoginController {
   }
 
   broadcastShowDashboardIntent() {
-    if (typeof this.ledgerApi !== 'undefined') {
-      this.ledgerApi.clearDeviceListeners();
-    }
     this.IntentBroadcast.sendBroadcast(
       new Intent(
         Intent.TYPES.SHOW_DASHBOARD
