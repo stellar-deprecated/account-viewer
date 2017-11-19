@@ -5,19 +5,24 @@
   border-bottom: 0;
   background: $s-color-primary9;
 }
-  .loginBox__label {
-    margin-bottom: 0.25em;
+.loginBox__label {
+  margin-bottom: 0.25em;
+}
+.loginBox__info {
+  font-size: 0.85em;
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+.loginBox__input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1em;
+}
+.loginBox__submit {
+  padding-left: 2em;
+  padding-right: 2em;
+  @include r-media(s) {
+    padding-left: 5em;
+    padding-right: 5em;
   }
-  .loginBox__input {
-    display: block;
-    width: 100%;
-    margin-bottom: 1em;
-  }
-  .loginBox__submit {
-    padding-left: 2em;
-    padding-right: 2em;
-    @include r-media(s) {
-      padding-left: 5em;
-      padding-right: 5em;
-    }
-  }
+}

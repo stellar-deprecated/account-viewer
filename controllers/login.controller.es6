@@ -29,6 +29,9 @@ export default class LoginController {
     this.bip32Path = "44'/148'/0'";
     this.connectLedger();
 
+    this.infoImage = require('../images/info.png');
+    this.showInfo = false;
+
     Alerts.registerGroup(this.alertGroup);
   }
 
@@ -38,6 +41,10 @@ export default class LoginController {
         Intent.TYPES.SHOW_DASHBOARD
       )
     );
+  }
+
+  toggleInfo() {
+    this.showInfo = !this.showInfo;
   }
 
   connectLedger() {
