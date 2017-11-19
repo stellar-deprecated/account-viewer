@@ -8,9 +8,9 @@ import BasicClientError from '../errors';
 import StellarLedger from 'stellar-ledger-api';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
-@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts", "interstellar-core.IntentBroadcast")
+@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
 export default class SendWidgetController {
-  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts, IntentBroadcast) {
+  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts) {
     if (!Sessions.hasDefault()) {
       console.error('No session');
       return;
@@ -68,35 +68,8 @@ export default class SendWidgetController {
     });
     Alerts.registerGroup(this.memoAlertGroup);
 
-    this.IntentBroadcast = IntentBroadcast;
-    this.transactionReady = true;
     this.useLedger = this.session.data && this.session.data['useLedger'];
-    if (this.useLedger) {
-      this.initializeLedger();
-    }
-    this.IntentBroadcast.registerReceiver(Intent.TYPES.LOGOUT, () => {
-      this.stopLedgerMonitor();
-    });
-  }
-
-  initializeLedger() {
     this.bip32Path = this.session.data['bip32Path'];
-    this.ledgerApi = new StellarLedger.Api(new StellarLedger.comm(3));
-    this.ledgerApi.addDeviceListener((status, msg) => {
-      this.transactionReady = (status === 'Connected');
-      if (status === 'Timeout') {
-        status = 'Not connected';
-      }
-      if (msg) {
-        status = status + ': ' + msg;
-      }
-      this.ledgerStatus = status;
-      this.$scope.$apply();
-    });
-  }
-
-  stopLedgerMonitor() {
-    this.ledgerApi.clearDeviceListeners();
   }
 
   loadDestination($event) {
@@ -392,7 +365,6 @@ export default class SendWidgetController {
           .build();
 
         if (this.useLedger) {
-          // dedicated comm channel for extended timeout
           let ledgerApi = new StellarLedger.Api(new StellarLedger.comm(120));
           return ledgerApi.signTx_async(this.bip32Path, transaction).then(result => {
             let signature = result['signature'];

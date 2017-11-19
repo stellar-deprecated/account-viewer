@@ -41,6 +41,13 @@
     </div>
     <div class="middleBox">
       Ledger Nano S ({{login.ledgerStatus}})<br/>
+      <input type="text" ng-model="login.bip32Path" class="loginBox__input" placeholder="44'/148'/0'" />
+      <div class="s-alert s-alert--alert" ng-if="login.ledgerAlerts.length > 0">
+        <span ng-repeat="alert in login.ledgerAlerts">
+          {{alert.title}}<br /><br />
+          {{alert.text}}
+        </span>
+      </div>
       <button type="button" class="s-button loginBox__submit" ng-click="login.proceedWithLedger()" ng-disabled="login.ledgerStatus != 'Connected'">Proceed with Ledger</button>
     </div>
     <div class="middleBox">

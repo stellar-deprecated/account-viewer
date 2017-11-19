@@ -106,10 +106,7 @@
       </div>
     </div>
 
-    <div ng-if="widget.useLedger">
-      Ledger Status: <span>{{widget.ledgerStatus}}</span>
-    </div>
-    <button class="s-button sendConfirm__submit" ng-click="widget.confirm()" ng-disabled="!widget.transactionReady">Submit transaction</button>
+    <button class="s-button sendConfirm__submit" ng-click="widget.confirm()">Submit transaction</button>
 
     <a href="#" class="sendConfirm__edit" ng-click="widget.showView($event, 'sendSetup')">← Edit</a>
   </div>

@@ -22,7 +22,10 @@ export default class LoginController {
       this.alerts = alerts;
     });
 
-    this.ledgerStatus = 'Not connected';
+    this.ledgerAlertGroup = new AlertGroup();
+    this.ledgerAlertGroup.registerUpdateListener(alerts => {
+      this.ledgerAlerts = alerts;
+    });
     this.connectLedger();
 
     Alerts.registerGroup(this.alertGroup);
@@ -40,30 +43,47 @@ export default class LoginController {
   }
 
   connectLedger() {
-    this.ledgerApi = new StellarLedger.Api(new StellarLedger.comm(3));
-    this.ledgerApi.addDeviceListener((status, msg) => {
-      if (status === 'Timeout') {
-        status = 'Not connected';
-      }
-      if (msg) {
-        status = status + ': ' + msg;
-      }
-      this.ledgerStatus = status;
-      this.$scope.$apply();
-    });
+    this.ledgerStatus = 'Not connected';
+    new StellarLedger.Api(new StellarLedger.comm(20))
+      .connect(() => {
+        this.ledgerStatus = 'Connected';
+        this.$scope.$apply();
+      }, () => {
+        this.ledgerStatus = 'Error: ' + err;
+        this.$scope.$apply();
+      });
   }
 
   proceedWithLedger() {
     let bip32Path = "44'/148'/0'";
-    this.ledgerApi.getPublicKey_async(bip32Path).then((result) => {
-      let permanent = this.Config.get("permanentSession");
-      let data = { useLedger: true, bip32Path };
-      let address = result['publicKey'];
-      this.Sessions.createDefault({address, data, permanent})
+    if (typeof this.bip32Path !== 'undefined') {
+      bip32Path = this.bip32Path;
+    }
+    try {
+      new StellarLedger.Api(new StellarLedger.comm(5)).getPublicKey_async(bip32Path).then((result) => {
+        let permanent = this.Config.get("permanentSession");
+        let data = { useLedger: true, bip32Path };
+        let address = result['publicKey'];
+        this.Sessions.createDefault({address, data, permanent})
           .then(() => {
             this.broadcastShowDashboardIntent();
           });
-    });
+      }).catch((err) => {
+        let alert = new Alert({
+          title: 'Failed to connect',
+          text: err,
+          type: Alert.TYPES.ERROR
+        });
+        this.ledgerAlertGroup.show(alert);
+      });
+    } catch (err) {
+      let alert = new Alert({
+        title: 'Failed to connect',
+        text: err,
+        type: Alert.TYPES.ERROR
+      });
+      this.ledgerAlertGroup.show(alert);
+    }
   }
 
   generate() {
@@ -91,7 +111,7 @@ export default class LoginController {
       let alert = new Alert({
         title: 'Invalid secret key',
         text: 'Secret keys are uppercase and begin with the letter "S."',
-        type: Alert.TYPES.ERROR
+        type: Alert.TYPES
       });
       this.alertGroup.show(alert);
     }
