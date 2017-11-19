@@ -26,6 +26,7 @@ export default class LoginController {
     this.ledgerAlertGroup.registerUpdateListener(alerts => {
       this.ledgerAlerts = alerts;
     });
+    this.bip32Path = "44'/148'/0'";
     this.connectLedger();
 
     Alerts.registerGroup(this.alertGroup);
@@ -55,14 +56,11 @@ export default class LoginController {
   }
 
   proceedWithLedger() {
-    let bip32Path = "44'/148'/0'";
-    if (typeof this.bip32Path !== 'undefined') {
-      bip32Path = this.bip32Path;
-    }
+    this.bip32Path;
     try {
-      new StellarLedger.Api(new StellarLedger.comm(5)).getPublicKey_async(bip32Path).then((result) => {
+      new StellarLedger.Api(new StellarLedger.comm(5)).getPublicKey_async(this.bip32Path).then((result) => {
         let permanent = this.Config.get("permanentSession");
-        let data = { useLedger: true, bip32Path };
+        let data = { useLedger: true, bip32Path: this.bip32Path };
         let address = result['publicKey'];
         this.Sessions.createDefault({address, data, permanent})
           .then(() => {

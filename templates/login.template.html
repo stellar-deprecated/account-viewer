@@ -40,8 +40,8 @@
         <button type="button" class="s-button loginBox__submit" ng-click="login.generate()">Generate</button>
     </div>
     <div class="middleBox">
-      Ledger Nano S ({{login.ledgerStatus}})<br/>
-      <input type="text" ng-model="login.bip32Path" class="loginBox__input" placeholder="44'/148'/0'" />
+      Ledger Nano S (available on Chrome and Opera)<br/>
+      <input type="text" ng-model="login.bip32Path" class="loginBox__input" placeholder="BIP32 path: 44'/148'/n'" />
       <div class="s-alert s-alert--alert" ng-if="login.ledgerAlerts.length > 0">
         <span ng-repeat="alert in login.ledgerAlerts">
           {{alert.title}}<br /><br />
