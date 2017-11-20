@@ -45,7 +45,7 @@
       <div class="loginBox__info" ng-show="login.showInfo">
         Available on Chrome and Opera. Install the Stellar app from Ledger and enable browser support in the app settings
       </div>
-      <input type="checkbox" ng-model="showBip32Input" ng-init="showBip32Input=false" /> <span ng-if="!showBip32Input">Select Account</span> <input type="text" ng-model="login.bip32Path" class="loginBox__input" placeholder="BIP32 path: 44'/148'/n'" ng-if="showBip32Input" />
+      <input type="checkbox" ng-model="hideBip32Input" ng-init="hideBip32Input=true" /> <span ng-if="hideBip32Input">Use default account</span> <input type="text" ng-model="login.bip32Path" class="loginBox__input" placeholder="BIP32 path: 44'/148'/n'" ng-if="!hideBip32Input" />
       <div class="s-alert s-alert--alert" ng-if="login.ledgerAlerts.length > 0">
         <span ng-repeat="alert in login.ledgerAlerts">
           {{alert.title}}<br /><br />
