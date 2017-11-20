@@ -13,6 +13,24 @@
   margin-top: 0.25em;
   margin-bottom: 0.25em;
 }
+.loginBox__ledgerAccount {
+  font-size: 0.85em;
+  margin-top: 0.25em;
+  margin-bottom: 0.50em;
+  height: 1.5em;
+}
+.loginBox__ledgerAccount input[type=checkbox] {
+  float: left;
+  margin-right: 0.50em;
+  margin-top: 0.25em;
+}
+.loginBox__ledgerAccount input[type=text] {
+  width: 8em;
+  height: 1.5em;
+  margin-left: 1.5em;
+  margin-bottom: 0em;
+  padding: 0.5em;
+}
 .loginBox__input {
   display: block;
   width: 100%;
