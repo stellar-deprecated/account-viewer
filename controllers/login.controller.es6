@@ -60,16 +60,14 @@ export default class LoginController {
   }
 
   proceedWithLedger() {
-    this.bip32Path;
+    console.log(this.bip32Path);
     try {
       new StellarLedger.Api(new StellarLedger.comm(5)).getPublicKey_async(this.bip32Path).then((result) => {
         let permanent = this.Config.get("permanentSession");
         let data = { useLedger: true, bip32Path: this.bip32Path };
         let address = result['publicKey'];
         this.Sessions.createDefault({address, data, permanent})
-          .then(() => {
-            this.broadcastShowDashboardIntent();
-          });
+          .then(() => this.broadcastShowDashboardIntent());
       }).catch((err) => {
         let alert = new Alert({
           title: 'Failed to connect',
@@ -113,7 +111,7 @@ export default class LoginController {
       let alert = new Alert({
         title: 'Invalid secret key',
         text: 'Secret keys are uppercase and begin with the letter "S."',
-        type: Alert.TYPES
+        type: Alert.TYPES.ERROR
       });
       this.alertGroup.show(alert);
     }

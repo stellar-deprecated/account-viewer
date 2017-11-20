@@ -372,7 +372,7 @@ export default class SendWidgetController {
             let hint = keyPair.signatureHint();
             let decorated = new xdr.DecoratedSignature({hint, signature});
             transaction.signatures.push(decorated);
-            this.Server.submitTransaction(transaction);
+            return this.Server.submitTransaction(transaction);
           }).catch(e => {
             this.ledgerError = e;
             throw e;
