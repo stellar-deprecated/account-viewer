@@ -61,7 +61,7 @@ export default class LoginController {
 
   proceedWithLedger() {
     try {
-      new StellarLedger.Api(new StellarLedger.comm(5)).getPublicKey_async(this.bip32Path).then((result) => {
+      new StellarLedger.Api(new StellarLedger.comm(20)).getPublicKey_async(this.bip32Path).then((result) => {
         let permanent = this.Config.get("permanentSession");
         let data = { useLedger: true, bip32Path: this.bip32Path };
         let address = result['publicKey'];
