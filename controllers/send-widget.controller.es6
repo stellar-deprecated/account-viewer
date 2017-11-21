@@ -69,7 +69,7 @@ export default class SendWidgetController {
     Alerts.registerGroup(this.memoAlertGroup);
 
     this.useLedger = this.session.data && this.session.data['useLedger'];
-    this.bip32Path = this.session.data['bip32Path'];
+    this.bip32Path = this.session.data && this.session.data['bip32Path'];
   }
 
   loadDestination($event) {
