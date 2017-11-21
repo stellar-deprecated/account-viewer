@@ -2,6 +2,7 @@ import {Intent} from "interstellar-core";
 import {Controller, Inject} from "interstellar-core";
 import {Keypair} from 'stellar-base';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
+import StellarLedger from 'stellar-ledger-api';
 
 @Controller("LoginController")
 @Inject("$scope", "interstellar-core.Config", "interstellar-core.IntentBroadcast", "interstellar-sessions.Sessions", "interstellar-ui-messages.Alerts")
@@ -20,6 +21,17 @@ export default class LoginController {
     this.alertGroup.registerUpdateListener(alerts => {
       this.alerts = alerts;
     });
+
+    this.ledgerAlertGroup = new AlertGroup();
+    this.ledgerAlertGroup.registerUpdateListener(alerts => {
+      this.ledgerAlerts = alerts;
+    });
+    this.bip32Path = "44'/148'/0'";
+    this.connectLedger();
+
+    this.infoImage = require('../images/info.png');
+    this.showInfo = false;
+
     Alerts.registerGroup(this.alertGroup);
   }
 
@@ -29,6 +41,48 @@ export default class LoginController {
         Intent.TYPES.SHOW_DASHBOARD
       )
     );
+  }
+
+  toggleInfo() {
+    this.showInfo = !this.showInfo;
+  }
+
+  connectLedger() {
+    this.ledgerStatus = 'Not connected';
+    new StellarLedger.Api(new StellarLedger.comm(20))
+      .connect(() => {
+        this.ledgerStatus = 'Connected';
+        this.$scope.$apply();
+      }, () => {
+        this.ledgerStatus = 'Error: ' + err;
+        this.$scope.$apply();
+      });
+  }
+
+  proceedWithLedger() {
+    try {
+      new StellarLedger.Api(new StellarLedger.comm(20)).getPublicKey_async(this.bip32Path).then((result) => {
+        let permanent = this.Config.get("permanentSession");
+        let data = { useLedger: true, bip32Path: this.bip32Path };
+        let address = result['publicKey'];
+        this.Sessions.createDefault({address, data, permanent})
+          .then(() => this.broadcastShowDashboardIntent());
+      }).catch((err) => {
+        let alert = new Alert({
+          title: 'Failed to connect',
+          text: err,
+          type: Alert.TYPES.ERROR
+        });
+        this.ledgerAlertGroup.show(alert);
+      });
+    } catch (err) {
+      let alert = new Alert({
+        title: 'Failed to connect',
+        text: err,
+        type: Alert.TYPES.ERROR
+      });
+      this.ledgerAlertGroup.show(alert);
+    }
   }
 
   generate() {

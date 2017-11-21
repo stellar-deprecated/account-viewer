@@ -125,7 +125,7 @@
     <div ng-if="!widget.success">
       <p class="sendOutcome__label">Transaction failed</p>
 
-      <pre class="sendOutcome__code"><code>{{widget.horizonResponse}}</code></pre>
+      <pre class="sendOutcome__code"><code>{{widget.outcomeMessage}}</code></pre>
     </div>
 
     <button class="s-button sendOutcome__return" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>

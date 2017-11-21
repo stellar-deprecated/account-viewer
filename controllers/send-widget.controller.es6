@@ -2,9 +2,10 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import {Widget, Inject, Intent} from 'interstellar-core';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import {Account, Asset, Keypair, Memo, Operation, TransactionBuilder} from 'stellar-base';
+import {Account, Asset, Keypair, Memo, Operation, TransactionBuilder, xdr} from 'stellar-base';
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
+import StellarLedger from 'stellar-ledger-api';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
 @Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
@@ -66,6 +67,9 @@ export default class SendWidgetController {
       this.memoAlerts = alerts;
     });
     Alerts.registerGroup(this.memoAlertGroup);
+
+    this.useLedger = this.session.data && this.session.data['useLedger'];
+    this.bip32Path = this.session.data['bip32Path'];
   }
 
   loadDestination($event) {
@@ -333,6 +337,7 @@ export default class SendWidgetController {
   }
 
   _submitTransaction(operation) {
+
     return this.Sessions.loadDefaultAccount()
       .then(() => {
         let memo = Memo.none();
@@ -359,9 +364,23 @@ export default class SendWidgetController {
           .addMemo(memo)
           .build();
 
-        transaction.sign(Keypair.fromSeed(this.session.getSecret()));
-
-        return this.Server.submitTransaction(transaction);
+        if (this.useLedger) {
+          let ledgerApi = new StellarLedger.Api(new StellarLedger.comm(120));
+          return ledgerApi.signTx_async(this.bip32Path, transaction).then(result => {
+            let signature = result['signature'];
+            let keyPair = Keypair.fromAccountId(this.session.address);
+            let hint = keyPair.signatureHint();
+            let decorated = new xdr.DecoratedSignature({hint, signature});
+            transaction.signatures.push(decorated);
+            return this.Server.submitTransaction(transaction);
+          }).catch(e => {
+            this.ledgerError = e;
+            throw e;
+          });
+        } else {
+          transaction.sign(Keypair.fromSeed(this.session.getSecret()));
+          return this.Server.submitTransaction(transaction);
+        }
       })
       .then(() => {
         this.success = true;
@@ -373,7 +392,11 @@ export default class SendWidgetController {
       })
       .catch(e => {
         this.success = false;
-        this.horizonResponse = JSON.stringify(e, null, '  ');
+        if (this.ledgerError !== null) {
+          this.outcomeMessage = this.ledgerError;
+        } else {
+          this.outcomeMessage = JSON.stringify(e, null, '  ');
+        }
       })
       .finally(() => {
         this.showView(null, 'sendOutcome');
