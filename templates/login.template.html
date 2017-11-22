@@ -40,11 +40,10 @@
         <button type="button" class="s-button loginBox__submit" ng-click="login.generate()">Generate</button>
     </div>
     <div class="middleBox">
-      <span class="experimental">Experimental</span> Connect Ledger Nano S <img ng-src="{{login.infoImage}}" ng-mousedown="login.toggleInfo()" style="cursor: pointer;" title="Click me" />
+      Connect Ledger Nano S <img ng-src="{{login.infoImage}}" ng-mousedown="login.toggleInfo()" style="cursor: pointer;" title="Click me" />
       <br/>
       <div class="loginBox__info" ng-show="login.showInfo">
-        Available on Chrome and Opera. Install the Stellar app from Ledger and enable browser support in the app settings.<br />
-        This is <strong>experimental</strong> feature use at your own risk.
+        Available on Chrome and Opera. Install the Stellar app from Ledger and enable browser support in the app settings.
       </div>
       <div class="loginBox__ledgerAccount">
         <input id="ledgerDefaultAccountCheckbox" type="checkbox" ng-model="hideBip32Input" ng-init="hideBip32Input=true" />
