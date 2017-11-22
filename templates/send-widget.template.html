@@ -115,6 +115,7 @@
     <div class="sendWaiting__rocket">
       <img ng-src="{{widget.rocketImage}}" alt="Submitting..." />
     </div>
+    <p ng-if="widget.useLedger" class="sendWaiting__ledger">Check the transaction using your Ledger device.</p>
     <p class="sendWaiting__status">Submitting transaction to the network...</p>
   </div>
 
