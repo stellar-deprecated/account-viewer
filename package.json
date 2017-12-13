@@ -20,7 +20,7 @@
     "interstellar-ui-messages": "~0.0.3",
     "lodash": "^3.10.1",
     "stellar-base": "~0.6.0",
-    "stellar-ledger-api": "1.1.0",
+    "stellar-ledger-api": "1.1.3",
     "stellar-sdk": "~0.6.2"
   },
   "devDependencies": {

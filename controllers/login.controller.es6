@@ -49,7 +49,7 @@ export default class LoginController {
 
   connectLedger() {
     this.ledgerStatus = 'Not connected';
-    new StellarLedger.Api(new StellarLedger.comm(20))
+    new StellarLedger.Api(new StellarLedger.comm(Number.MAX_VALUE))
       .connect(() => {
         this.ledgerStatus = 'Connected';
         this.$scope.$apply();
