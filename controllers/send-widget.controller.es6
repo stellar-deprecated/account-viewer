@@ -390,16 +390,17 @@ export default class SendWidgetController {
             let hint = keyPair.signatureHint();
             let decorated = new xdr.DecoratedSignature({hint, signature});
             transaction.signatures.push(decorated);
+            this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
+            return this.Server.submitTransaction(transaction);
           }).catch(e => {
             this.ledgerError = e;
             throw e;
           });
         } else {
           transaction.sign(Keypair.fromSeed(this.session.getSecret()));
+          this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
+          return this.Server.submitTransaction(transaction);
         }
-
-        this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
-        return this.Server.submitTransaction(transaction);
       })
       .then(this._submitOnSuccess.bind(this))
       .catch(this._submitOnFailure.bind(this))
