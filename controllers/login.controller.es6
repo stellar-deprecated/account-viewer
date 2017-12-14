@@ -1,6 +1,6 @@
 import {Intent} from "interstellar-core";
 import {Controller, Inject} from "interstellar-core";
-import {Keypair} from 'stellar-base';
+import {Keypair} from 'stellar-sdk';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
 import StellarLedger from 'stellar-ledger-api';
 

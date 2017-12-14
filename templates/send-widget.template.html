@@ -126,9 +126,17 @@
     <div ng-if="!widget.success">
       <p class="sendOutcome__label">Transaction failed</p>
 
-      <pre class="sendOutcome__code"><code>{{widget.outcomeMessage}}</code></pre>
+      <p class="" ng-if="widget.needsResubmit">
+        <strong>Warning</strong> We submitted your transaction to the network but because of the network conditions we are
+        not certain about it's status: it could either succeed or fail. Instead of recreating the transaction you should use
+        the button below to safely resubmit the transaction:<br />
+        <br />
+        <button class="s-button sendConfirm__submit" ng-click="widget.resubmitTransaction()">Resubmit transaction</button>
+      </p>
+
+      <pre class="sendOutcome__code" ng-if="widget.outcomeMessage"><code>{{widget.outcomeMessage}}</code></pre>
     </div>
 
-    <button class="s-button sendOutcome__return" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
+    <button class="s-button sendOutcome__return" ng-if="widget.success || !widget.needsResubmit" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
   </div>
 </div>
