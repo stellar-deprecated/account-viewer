@@ -82,16 +82,23 @@ export default class HistoryWidgetController {
       payment.amount = payment.starting_balance;
     }
 
-    payment.direction = (payment.from === this.address) ? 'out' : 'in';
-    payment.display_address = (payment.from === this.address) ? payment.to : payment.from;
-    let sign = payment.direction === 'in' ? '+' : '-';
-    let formattedAmount = new BigNumber(payment.amount).toFormat();
-    payment.display_amount = `${sign}${formattedAmount}`;
-
-    if (payment.asset_code) {
-      payment.display_asset_code = payment.asset_code;
+    if (payment.type === 'account_merge') {
+      payment.direction = (payment.account === this.address) ? 'out' : 'in';
+      payment.display_address = (payment.account === this.address) ? payment.into : payment.account;
+      let sign = payment.direction === 'in' ? '+' : '-';
+      payment.display_amount = '[account merge]';
     } else {
-      payment.display_asset_code = 'XLM';
+      payment.direction = (payment.from === this.address) ? 'out' : 'in';
+      payment.display_address = (payment.from === this.address) ? payment.to : payment.from;
+      let sign = payment.direction === 'in' ? '+' : '-';
+      let formattedAmount = new BigNumber(payment.amount).toFormat();
+      payment.display_amount = `${sign}${formattedAmount}`;
+
+      if (payment.asset_code) {
+        payment.display_asset_code = payment.asset_code;
+      } else {
+        payment.display_asset_code = 'XLM';
+      }
     }
 
     payment.link = payment._links.self.href;
