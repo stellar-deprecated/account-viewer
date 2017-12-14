@@ -2,7 +2,7 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import {Widget, Inject, Intent} from 'interstellar-core';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import {Account, Asset, Keypair, Memo, Operation, TransactionBuilder, xdr} from 'stellar-base';
+import {Account, Asset, Keypair, Memo, Operation, Transaction, TransactionBuilder, xdr} from 'stellar-sdk';
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
 import StellarLedger from 'stellar-ledger-api';
@@ -30,6 +30,8 @@ export default class SendWidgetController {
     this.stellarAddress = null;
     // Resolved destination (accountId/address)
     this.destination = null;
+    // XDR of the last transaction submitted to horizon. Will be helpful resubmit is needed.
+    this.lastTransactionXDR = null;
 
     this.$scope.$watch('widget.memoType', type => {
       switch (type) {
@@ -177,6 +179,8 @@ export default class SendWidgetController {
     }
 
     this.sending = true;
+    this.ledgerError = null;
+
     this.addressAlertGroup.clear();
     this.amountAlertGroup.clear();
     this.memoAlertGroup.clear();
@@ -336,8 +340,22 @@ export default class SendWidgetController {
       });
   }
 
-  _submitTransaction(operation) {
+  resubmitTransaction() {
+    if (this.lastTransactionXDR === null) {
+      return;
+    }
 
+    this.showView(null, 'sendWaiting');
+
+    var transaction = new Transaction(this.lastTransactionXDR);
+
+    return this.Server.submitTransaction(transaction)
+      .then(this._submitOnSuccess.bind(this))
+      .catch(this._submitOnFailure.bind(this))
+      .finally(this._submitFinally.bind(this));
+  }
+
+  _submitTransaction(operation) {
     return this.Sessions.loadDefaultAccount()
       .then(() => {
         let memo = Memo.none();
@@ -372,35 +390,48 @@ export default class SendWidgetController {
             let hint = keyPair.signatureHint();
             let decorated = new xdr.DecoratedSignature({hint, signature});
             transaction.signatures.push(decorated);
-            return this.Server.submitTransaction(transaction);
           }).catch(e => {
             this.ledgerError = e;
             throw e;
           });
         } else {
           transaction.sign(Keypair.fromSeed(this.session.getSecret()));
-          return this.Server.submitTransaction(transaction);
         }
+
+        this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
+        return this.Server.submitTransaction(transaction);
       })
-      .then(() => {
-        this.success = true;
-        this.destinationAddress = null;
-        this.destination = null;
-        this.amount = null;
-        this.memo = false;
-        this.$rootScope.$broadcast('account-viewer.transaction-success');
-      })
-      .catch(e => {
-        this.success = false;
-        if (this.ledgerError !== null) {
-          this.outcomeMessage = this.ledgerError;
-        } else {
-          this.outcomeMessage = JSON.stringify(e, null, '  ');
-        }
-      })
-      .finally(() => {
-        this.showView(null, 'sendOutcome');
-        this.$scope.$apply()
-      });
+      .then(this._submitOnSuccess.bind(this))
+      .catch(this._submitOnFailure.bind(this))
+      .finally(this._submitFinally.bind(this));
+  }
+
+  _submitOnSuccess() {
+    this.success = true;
+    this.destinationAddress = null;
+    this.destination = null;
+    this.amount = null;
+    this.memo = false;
+    this.lastTransactionXDR = null;
+    this.$rootScope.$broadcast('account-viewer.transaction-success');
+  }
+
+  _submitOnFailure(e) {
+    this.success = false;
+    this.needsResubmit = false;
+
+    if (this.ledgerError !== null) {
+      this.outcomeMessage = this.ledgerError;
+    } else {
+      if (e.title != "Transaction Failed" && e.title != "Transaction Malformed") {
+        this.needsResubmit = true;
+      }
+      this.outcomeMessage = JSON.stringify(e, null, '  ');
+    }
+  }
+
+  _submitFinally() {
+    this.showView(null, 'sendOutcome');
+    this.$scope.$apply()
   }
 }
