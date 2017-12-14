@@ -179,7 +179,7 @@ export default class SendWidgetController {
     }
 
     this.sending = true;
-    this.ledgerError = null;
+    this.ledgerError = false;
 
     this.addressAlertGroup.clear();
     this.amountAlertGroup.clear();
@@ -390,17 +390,19 @@ export default class SendWidgetController {
             let hint = keyPair.signatureHint();
             let decorated = new xdr.DecoratedSignature({hint, signature});
             transaction.signatures.push(decorated);
-            this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
-            return this.Server.submitTransaction(transaction);
+            return transaction;
           }).catch(e => {
-            this.ledgerError = e;
+            this.ledgerError = true;
             throw e;
           });
         } else {
           transaction.sign(Keypair.fromSeed(this.session.getSecret()));
-          this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
-          return this.Server.submitTransaction(transaction);
+          return transaction;
         }
+      })
+      .then(transaction => {
+        this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
+        return this.Server.submitTransaction(transaction);
       })
       .then(this._submitOnSuccess.bind(this))
       .catch(this._submitOnFailure.bind(this))
@@ -421,8 +423,14 @@ export default class SendWidgetController {
     this.success = false;
     this.needsResubmit = false;
 
-    if (this.ledgerError !== null) {
-      this.outcomeMessage = this.ledgerError;
+    if (this.ledgerError) {
+      if (e.errorCode == 2) {
+        this.outcomeMessage = `Couldn't connect to Ledger device. Connection can only be established using a secure connection.`;
+      } else if (e.errorCode == 5) {
+        this.outcomeMessage = `Ledger connection timeout.`;
+      } else {
+        this.outcomeMessage = 'Unknown error: '+JSON.stringify(e);
+      }
     } else {
       if (e.title != "Transaction Failed" && e.title != "Transaction Malformed") {
         this.needsResubmit = true;
