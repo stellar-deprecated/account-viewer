@@ -134,7 +134,6 @@ export default class SendWidgetController {
         this.$scope.$apply();
       })
       .catch(error => {
-        console.log(error);
         let alert;
         if (this.destinationAddress.indexOf('*') < 0) {
           alert = new Alert({
