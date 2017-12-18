@@ -5,6 +5,7 @@ import {Alert, AlertGroup} from 'interstellar-ui-messages';
 import {Account, Asset, Keypair, Memo, Operation, Transaction, TransactionBuilder, xdr} from 'stellar-sdk';
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
+import knownAccounts from '../known_accounts';
 import StellarLedger from 'stellar-ledger-api';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
@@ -123,12 +124,17 @@ export default class SendWidgetController {
           this.memoBlocked = true;
         } else {
           this.memoBlocked = false;
-          
         }
+
+        if (this.destination in knownAccounts && knownAccounts[this.destination].memo_required) {
+          this.memo = true;
+        }
+
         this.loadingDestination = false;
         this.$scope.$apply();
       })
       .catch(error => {
+        console.log(error);
         let alert;
         if (this.destinationAddress.indexOf('*') < 0) {
           alert = new Alert({
@@ -202,6 +208,18 @@ export default class SendWidgetController {
         type: Alert.TYPES.ERROR
       });
       this.amountAlertGroup.show(alert);
+    }
+
+    // check if the destination requires a memo
+    if (this.destination in knownAccounts && knownAccounts[this.destination].memo_required && !this.memoValue) {
+      let alert = new Alert({
+        title: '',
+        text: 'The payment destination (' + knownAccounts[this.destination].name +') requires you to specify a memo to identify your account.',
+        type: Alert.TYPES.ERROR
+      });
+      this.memoAlertGroup.show(alert);
+      this.sending = false;
+      return;
     }
 
     if (this.memo) {
