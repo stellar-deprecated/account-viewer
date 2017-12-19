@@ -126,8 +126,14 @@ export default class SendWidgetController {
           this.memoBlocked = false;
         }
 
-        if (this.destination in knownAccounts && knownAccounts[this.destination].memo_required) {
+        if (this.destination in knownAccounts && knownAccounts[this.destination].requiredMemoType) {
           this.memo = true;
+          this.memoType = knownAccounts[this.destination].requiredMemoType;
+          let alert = new Alert({
+            text: 'The payment destination (' + knownAccounts[this.destination].name +') requires you to specify a memo to identify your account.',
+            type: Alert.TYPES.WARNING
+          });
+          this.memoAlertGroup.show(alert);
         }
 
         this.loadingDestination = false;
@@ -207,18 +213,6 @@ export default class SendWidgetController {
         type: Alert.TYPES.ERROR
       });
       this.amountAlertGroup.show(alert);
-    }
-
-    // check if the destination requires a memo
-    if (this.destination in knownAccounts && knownAccounts[this.destination].memo_required && !this.memoValue) {
-      let alert = new Alert({
-        title: '',
-        text: 'The payment destination (' + knownAccounts[this.destination].name +') requires you to specify a memo to identify your account.',
-        type: Alert.TYPES.ERROR
-      });
-      this.memoAlertGroup.show(alert);
-      this.sending = false;
-      return;
     }
 
     if (this.memo) {
