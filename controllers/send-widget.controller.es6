@@ -5,6 +5,7 @@ import {Alert, AlertGroup} from 'interstellar-ui-messages';
 import {Account, Asset, Keypair, Memo, Operation, Transaction, TransactionBuilder, xdr} from 'stellar-sdk';
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
+import knownAccounts from '../known_accounts';
 import StellarLedger from 'stellar-ledger-api';
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
@@ -64,11 +65,17 @@ export default class SendWidgetController {
     });
     Alerts.registerGroup(this.amountAlertGroup);
 
-    this.memoAlertGroup = new AlertGroup();
-    this.memoAlertGroup.registerUpdateListener(alerts => {
-      this.memoAlerts = alerts;
+    this.memoErrorAlertGroup = new AlertGroup();
+    this.memoErrorAlertGroup.registerUpdateListener(alerts => {
+      this.memoErrorAlerts = alerts;
     });
-    Alerts.registerGroup(this.memoAlertGroup);
+    Alerts.registerGroup(this.memoErrorAlertGroup);
+
+    this.memoWarningAlertGroup = new AlertGroup();
+    this.memoWarningAlertGroup.registerUpdateListener(alerts => {
+      this.memoWarningAlerts = alerts;
+    });
+    Alerts.registerGroup(this.memoWarningAlertGroup);
 
     this.useLedger = this.session.data && this.session.data['useLedger'];
     this.bip32Path = this.session.data && this.session.data['bip32Path'];
@@ -77,6 +84,7 @@ export default class SendWidgetController {
   loadDestination($event) {
     this.loadingDestination = true;
     this.addressAlertGroup.clear();
+    this.memoWarningAlertGroup.clear();
 
     let resetState = () => {
       this.destination = null;
@@ -123,8 +131,18 @@ export default class SendWidgetController {
           this.memoBlocked = true;
         } else {
           this.memoBlocked = false;
-          
         }
+
+        if (this.destination in knownAccounts && knownAccounts[this.destination].requiredMemoType) {
+          this.memo = true;
+          this.memoType = knownAccounts[this.destination].requiredMemoType;
+          let alert = new Alert({
+            text: 'The payment destination (' + knownAccounts[this.destination].name +') requires you to specify a memo to identify your account.',
+            type: Alert.TYPES.WARNING
+          });
+          this.memoWarningAlertGroup.show(alert);
+        }
+
         this.loadingDestination = false;
         this.$scope.$apply();
       })
@@ -160,7 +178,7 @@ export default class SendWidgetController {
     if ($event) {
       $event.preventDefault();
     }
-    this.memoAlertGroup.clear();
+    this.memoErrorAlertGroup.clear();
     this.memo = false;
     this.memoType = null;
     this.memoValue = null;
@@ -183,7 +201,7 @@ export default class SendWidgetController {
 
     this.addressAlertGroup.clear();
     this.amountAlertGroup.clear();
-    this.memoAlertGroup.clear();
+    this.memoErrorAlertGroup.clear();
 
     if (!Account.isValidAccountId(this.destination)) {
       let alert = new Alert({
@@ -231,11 +249,11 @@ export default class SendWidgetController {
           text: memoError,
           type: Alert.TYPES.ERROR
         });
-        this.memoAlertGroup.show(alert);
+        this.memoErrorAlertGroup.show(alert);
       }
     }
 
-    if (this.addressAlerts.length || this.amountAlerts.length || this.memoAlerts.length) {
+    if (this.addressAlerts.length || this.amountAlerts.length || this.memoErrorAlerts.length) {
       this.sending = false;
       return;
     }
@@ -415,7 +433,10 @@ export default class SendWidgetController {
     this.destination = null;
     this.amount = null;
     this.memo = false;
+    this.memoType = null;
+    this.memoValue = null;
     this.lastTransactionXDR = null;
+    this.memoWarningAlertGroup.clear();
     this.$rootScope.$broadcast('account-viewer.transaction-success');
   }
 
