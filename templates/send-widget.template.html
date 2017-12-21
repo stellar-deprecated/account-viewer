@@ -110,6 +110,12 @@
         <span class="sendConfirm__sendingContainer__amount__info">{{widget.memoValue}}</span>
       </div>
     </div>
+    <div class="s-alert s-alert--warning" ng-if="!widget.memo && widget.memoWarningAlerts.length > 0">
+      <span ng-repeat="alert in widget.memoWarningAlerts">
+        {{alert.title}} {{alert.text}}
+      </span>
+    </div>
+
 
     <button class="s-button sendConfirm__submit" ng-click="widget.confirm()">Submit transaction</button>
 

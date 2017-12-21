@@ -433,7 +433,10 @@ export default class SendWidgetController {
     this.destination = null;
     this.amount = null;
     this.memo = false;
+    this.memoType = null;
+    this.memoValue = null;
     this.lastTransactionXDR = null;
+    this.memoWarningAlertGroup.clear();
     this.$rootScope.$broadcast('account-viewer.transaction-success');
   }
 
