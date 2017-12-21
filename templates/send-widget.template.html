@@ -65,7 +65,7 @@
           <input ng-model="widget.memoValue"
             ng-disabled="widget.memoBlocked"
             class="sendSetup__memo__memoSetup__input"
-            ng-class="{'s-inputAlert--alert': widget.memoAlerts.length > 0, 'is-disabled': widget.memoBlocked}"
+            ng-class="{'s-inputAlert--alert': widget.memoErrorAlerts.length > 0, 'is-disabled': widget.memoBlocked}"
             placeholder="{{widget.memoPlaceholder}}" type="text" />
         </div>
       </div>
@@ -75,8 +75,13 @@
         <strong>Note</strong>: The specified federation address requires this transaction's memo to be a certain value.
       </span>
     </div>
-    <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.memoAlerts.length > 0">
-      <span ng-repeat="alert in widget.memoAlerts">
+    <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.memoErrorAlerts.length > 0">
+      <span ng-repeat="alert in widget.memoErrorAlerts">
+        {{alert.title}} {{alert.text}}
+      </span>
+    </div>
+    <div class="s-alert s-alert--warning sendSetup__error" ng-if="widget.memoWarningAlerts.length > 0">
+      <span ng-repeat="alert in widget.memoWarningAlerts">
         {{alert.title}} {{alert.text}}
       </span>
     </div>
