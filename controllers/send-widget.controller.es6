@@ -8,6 +8,8 @@ import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
 import StellarLedger from 'stellar-ledger-api';
 
+const BASE_RESERVE = 0.5;
+
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
 @Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
 export default class SendWidgetController {
@@ -263,7 +265,7 @@ export default class SendWidgetController {
       .call()
       .then(account => {
         // Check if sending this transaction would make balance go below minimum balance
-        let minimumBalance = 20 + (account.subentry_count) * 10;
+        let minimumBalance = 2 * BASE_RESERVE + (account.subentry_count) * BASE_RESERVE;
         let nativeBalance = _(account.balances).find(balance => balance.asset_type === 'native').balance;
         let maxSend = new BigNumber(nativeBalance).minus(minimumBalance);
         if (maxSend.lt(this.amount)) {
@@ -271,8 +273,8 @@ export default class SendWidgetController {
         }
       })
       .then(() => {
-        // Check if destination account exists. If no, at least 20 XLM must be sent.
-        if (new BigNumber(this.amount).gte(20)) {
+        // Check if destination account exists. If no, at least 2*BASE_RESERVE XLM must be sent.
+        if (new BigNumber(this.amount).gte(2 * BASE_RESERVE)) {
           return;
         }
 
@@ -310,7 +312,7 @@ export default class SendWidgetController {
           case 'DestinationAccountNotExistError':
             alert = new Alert({
               title: 'Destination account doesn\'t exist.',
-              text: 'You account must send at least 20 lumens to create an account.',
+              text: 'You account must send at least '+(2 * BASE_RESERVE)+' lumens to create an account.',
               type: Alert.TYPES.ERROR
             });
             break;
