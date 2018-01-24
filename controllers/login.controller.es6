@@ -53,7 +53,7 @@ export default class LoginController {
       .connect(() => {
         this.ledgerStatus = 'Connected';
         this.$scope.$apply();
-      }, () => {
+      }, (err) => {
         this.ledgerStatus = 'Error: ' + err;
         this.$scope.$apply();
       });
