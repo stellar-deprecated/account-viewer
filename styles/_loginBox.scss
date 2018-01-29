@@ -1,5 +1,5 @@
 .loginBox {
-  max-width: 30em;
+  max-width: 40em;
   padding: 1.5em 2em 2em 2em;
   border: 1px solid $s-color-primary7;
   border-bottom: 0;
@@ -43,4 +43,7 @@
     padding-left: 5em;
     padding-right: 5em;
   }
+}
+.loginBox__warning {
+  color: $s-color-alert;
 }
