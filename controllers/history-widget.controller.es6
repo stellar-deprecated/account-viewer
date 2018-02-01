@@ -20,6 +20,7 @@ export default class HistoryWidgetController {
     this.showLengthLimitAlert = false;
 
     this.infoImage = require('../images/info.svg');
+    this.loadingImage = require('../images/loading.svg');
 
     this.loadPayments();
   }

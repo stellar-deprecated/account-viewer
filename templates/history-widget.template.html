@@ -8,8 +8,8 @@
   <div class="history__table" ng-if="widget.payments.length > 0">
     <table class="historyTable">
       <tr class="historyTable__row historyTable__row--header">
-        <th class="historyTable__cell">Account ID</th>
-        <th class="historyTable__cell">Amount</th>
+        <th class="historyTable__cell left">Account ID</th>
+        <th class="historyTable__cell right">Amount</th>
         <th class="historyTable__cell">Memo</th>
         <th class="historyTable__cell">Operation ID</th>
       </tr>
@@ -17,7 +17,7 @@
       <tr class="historyTable__row historyTable__row--data" ng-repeat="payment in widget.payments">
         <td class="historyTable__cell historyTable__accountID">{{payment.display_address}}</td>
 
-        <td class="historyTable__cell historyTable__amount">
+        <td class="historyTable__cell right">
           <code ng-class="{
             'historyTable__amount__number': true,
             'historyTable__amount__number--credit': payment.direction == 'in',
@@ -26,12 +26,13 @@
           <code class="historyTable__amount__code">{{payment.display_asset_code}}</code>
         </td>
 
-        <td class="historyTable__cell historyTable__memo">
+        <td class="historyTable__cell center">
           <img ng-if="payment.memo_type && payment.memo_type != 'none'" src="{{widget.infoImage}}" title="MEMO_{{payment.memo_type|uppercase}}: {{payment.memo}}">
           <span ng-if="!payment.memo_type || payment.memo_type == 'none'">
             -
           </span>
-          <span ng-if="!payment.memo_type">Loading...</span>
+
+          <img ng-if="!payment.memo_type" class="loading" src="{{widget.loadingImage}}" alt="Loading...">
         </td>
 
         <td class="historyTable__cell historyTable__details"><code><a ng-href="{{payment.link}}" target="_blank">{{payment.id}}</a></code></td>
