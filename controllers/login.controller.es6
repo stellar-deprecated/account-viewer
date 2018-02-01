@@ -29,7 +29,7 @@ export default class LoginController {
     this.bip32Path = "44'/148'/0'";
     this.connectLedger();
 
-    this.infoImage = require('../images/info.png');
+    this.infoImage = require('../images/info.svg');
     this.showInfo = false;
 
     Alerts.registerGroup(this.alertGroup);

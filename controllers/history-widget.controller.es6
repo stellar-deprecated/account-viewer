@@ -19,6 +19,8 @@ export default class HistoryWidgetController {
     this.loading = true;
     this.showLengthLimitAlert = false;
 
+    this.infoImage = require('../images/info.svg');
+
     this.loadPayments();
   }
 
