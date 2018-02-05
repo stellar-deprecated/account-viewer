@@ -9,7 +9,7 @@
     </div>
     <div class="dashboardOverviewRow">
       <p class="dashboardOverviewRow__label">Your Stellar public key:</p>
-      <p class="dashboardOverviewRow__text">{{widget.address}}</p>
+      <p class="dashboardOverviewRow__text">{{widget.address}}<span ng-if="widget.checkAddressAvailable" ng-click="widget.checkAddress()">&nbsp;&nbsp;<img ng-src="{{widget.monitorImage}}" style="cursor: pointer;" title="Check address on Ledger" /></span></p>
     </div>
   </div>
 

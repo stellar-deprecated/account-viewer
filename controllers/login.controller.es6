@@ -50,10 +50,11 @@ export default class LoginController {
   connectLedger() {
     this.ledgerStatus = 'Not connected';
     new StellarLedger.Api(new StellarLedger.comm(Number.MAX_VALUE))
-      .connect(() => {
+      .getAppConfiguration_async().then((result) => {
         this.ledgerStatus = 'Connected';
+        this.ledgerAppVersion = result.version;
         this.$scope.$apply();
-      }, (err) => {
+      }).catch((err) => {
         this.ledgerStatus = 'Error: ' + err;
         this.$scope.$apply();
       });
@@ -63,7 +64,7 @@ export default class LoginController {
     try {
       new StellarLedger.Api(new StellarLedger.comm(20)).getPublicKey_async(this.bip32Path).then((result) => {
         let permanent = this.Config.get("permanentSession");
-        let data = { useLedger: true, bip32Path: this.bip32Path };
+        let data = { useLedger: true, bip32Path: this.bip32Path, ledgerAppVersion: this.ledgerAppVersion };
         let address = result['publicKey'];
         this.Sessions.createDefault({address, data, permanent})
           .then(() => this.broadcastShowDashboardIntent());

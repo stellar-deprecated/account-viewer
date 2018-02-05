@@ -1,6 +1,7 @@
 import {Widget, Inject} from 'interstellar-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
+import StellarLedger from 'stellar-ledger-api';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')
 @Inject("$scope", "$rootScope", "$http", "interstellar-core.Config", "interstellar-sessions.Sessions", "interstellar-network.Server")
@@ -19,6 +20,10 @@ export default class BalanceWidgetController {
     this.balanceLoaded = false;
     this.showRefreshButton = false;
     this.accountNotFound = false;
+
+    this.checkAddressAvailable = session.data && session.data['useLedger'] && !session.data['ledgerAppVersion'].startsWith('1');
+    this.bip32Path = session.data && session.data['bip32Path'];
+    this.monitorImage = require('../images/monitor.png');
 
     this.$rootScope.$on('account-viewer.transaction-success', () => {
       this.invite = null;
@@ -116,5 +121,14 @@ export default class BalanceWidgetController {
     this.balance = new BigNumber(balance).toFormat();
     this.balanceLoaded = true;
     this.$scope.$apply();
+  }
+
+  checkAddress() {
+    try {
+      new StellarLedger.Api(new StellarLedger.comm(Number.MAX_VALUE)).getPublicKey_async(this.bip32Path, false, true);
+    } catch (err) {
+      console.log('error checking address');
+      console.log(err);
+    }
   }
 }
