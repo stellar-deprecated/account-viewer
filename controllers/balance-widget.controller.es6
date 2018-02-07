@@ -21,7 +21,10 @@ export default class BalanceWidgetController {
     this.showRefreshButton = false;
     this.accountNotFound = false;
 
-    this.checkAddressAvailable = session.data && session.data['useLedger'] && !session.data['ledgerAppVersion'].startsWith('1');
+    if (session.data && session.data['useLedger'] && session.data['ledgerAppVersion']) {
+      let ledgerAppMajorVersion = Number(session.data['ledgerAppVersion'].substring(0, session.data['ledgerAppVersion'].indexOf('.')));
+      this.checkAddressAvailable =  ledgerAppMajorVersion > 1;
+    }
     this.bip32Path = session.data && session.data['bip32Path'];
     this.monitorImage = require('../images/monitor.png');
 
@@ -125,7 +128,7 @@ export default class BalanceWidgetController {
 
   checkAddress() {
     try {
-      new StellarLedger.Api(new StellarLedger.comm(Number.MAX_VALUE)).getPublicKey_async(this.bip32Path, false, true);
+      new StellarLedger.Api(new StellarLedger.comm(60)).getPublicKey_async(this.bip32Path, false, true);
     } catch (err) {
       console.log('error checking address');
       console.log(err);
