@@ -6,7 +6,8 @@ import {Account, Asset, Keypair, Memo, Operation, Transaction, TransactionBuilde
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
-import StellarLedger from 'stellar-ledger-api';
+import LedgerTransport from '@ledgerhq/hw-transport-u2f';
+import LedgerStr from '@ledgerhq/hw-app-str';
 
 const BASE_RESERVE = 0.5;
 
@@ -403,18 +404,21 @@ export default class SendWidgetController {
           .build();
 
         if (this.useLedger) {
-          let ledgerApi = new StellarLedger.Api(new StellarLedger.comm(120));
-          return ledgerApi.signTx_async(this.bip32Path, transaction).then(result => {
-            let signature = result['signature'];
-            let keyPair = Keypair.fromAccountId(this.session.address);
-            let hint = keyPair.signatureHint();
-            let decorated = new xdr.DecoratedSignature({hint, signature});
-            transaction.signatures.push(decorated);
-            return transaction;
-          }).catch(e => {
-            this.ledgerError = true;
-            throw e;
-          });
+          const openTimeout = 60 * 1000; // one minute
+          return LedgerTransport.create(openTimeout).then((transport) => {
+            const ledgerApi = new LedgerStr(transport);
+            return ledgerApi.signTransaction(this.bip32Path, transaction.signatureBase()).then(result => {
+              let signature = result['signature'];
+              let keyPair = Keypair.fromAccountId(this.session.address);
+              let hint = keyPair.signatureHint();
+              let decorated = new xdr.DecoratedSignature({hint, signature});
+              transaction.signatures.push(decorated);
+              return transaction;
+            }).catch(e => {
+              this.ledgerError = true;
+              throw e;
+            });
+          })
         } else {
           transaction.sign(Keypair.fromSeed(this.session.getSecret()));
           return transaction;

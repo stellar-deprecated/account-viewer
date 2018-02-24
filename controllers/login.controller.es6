@@ -2,7 +2,8 @@ import {Intent} from "interstellar-core";
 import {Controller, Inject} from "interstellar-core";
 import {Keypair} from 'stellar-sdk';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import StellarLedger from 'stellar-ledger-api';
+import LedgerTransport from '@ledgerhq/hw-transport-u2f';
+import LedgerStr from '@ledgerhq/hw-app-str';
 
 @Controller("LoginController")
 @Inject("$scope", "interstellar-core.Config", "interstellar-core.IntentBroadcast", "interstellar-sessions.Sessions", "interstellar-ui-messages.Alerts")
@@ -48,9 +49,10 @@ export default class LoginController {
   }
 
   connectLedger() {
+    const openTimeout = 60 * 60 * 1000; // an hour
     this.ledgerStatus = 'Not connected';
-    new StellarLedger.Api(new StellarLedger.comm(Number.MAX_VALUE))
-      .getAppConfiguration_async().then((result) => {
+    LedgerTransport.create(openTimeout).then((transport) => {
+      new LedgerStr(transport).getAppConfiguration().then((result) =>{
         this.ledgerStatus = 'Connected';
         this.ledgerAppVersion = result.version;
         this.$scope.$apply();
@@ -58,16 +60,20 @@ export default class LoginController {
         this.ledgerStatus = 'Error: ' + err;
         this.$scope.$apply();
       });
+    });
   }
 
   proceedWithLedger() {
+    const openTimeout = 60 * 1000; // one minute
     try {
-      new StellarLedger.Api(new StellarLedger.comm(20)).getPublicKey_async(this.bip32Path).then((result) => {
-        let permanent = this.Config.get("permanentSession");
-        let data = { useLedger: true, bip32Path: this.bip32Path, ledgerAppVersion: this.ledgerAppVersion };
-        let address = result['publicKey'];
-        this.Sessions.createDefault({address, data, permanent})
-          .then(() => this.broadcastShowDashboardIntent());
+      LedgerTransport.create(openTimeout).then((transport) => {
+        new LedgerStr(transport).getPublicKey(this.bip32Path).then((result) => {
+          let permanent = this.Config.get("permanentSession");
+          let data = { useLedger: true, bip32Path: this.bip32Path, ledgerAppVersion: this.ledgerAppVersion };
+          let address = result.publicKey;
+          this.Sessions.createDefault({address, data, permanent})
+            .then(() => this.broadcastShowDashboardIntent());
+        });
       }).catch((err) => {
         let alert = new Alert({
           title: 'Failed to connect',

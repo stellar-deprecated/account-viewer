@@ -1,7 +1,8 @@
 import {Widget, Inject} from 'interstellar-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
-import StellarLedger from 'stellar-ledger-api';
+import LedgerTransport from '@ledgerhq/hw-transport-u2f';
+import LedgerStr from '@ledgerhq/hw-app-str';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')
 @Inject("$scope", "$rootScope", "$http", "interstellar-core.Config", "interstellar-sessions.Sessions", "interstellar-network.Server")
@@ -128,7 +129,9 @@ export default class BalanceWidgetController {
 
   checkAddress() {
     try {
-      new StellarLedger.Api(new StellarLedger.comm(60)).getPublicKey_async(this.bip32Path, false, true);
+      LedgerTransport.create().then((transport) =>{
+        new LedgerStr(transport).getPublicKey(this.bip32Path, false, true);
+      });
     } catch (err) {
       console.log('error checking address');
       console.log(err);
