@@ -53,7 +53,7 @@
         <button type="button" class="s-button loginBox__submit" ng-click="login.generate()">Generate</button>
     </div>
     <div class="middleBox">
-      Connect Ledger Hardware Wallet <img ng-src="{{login.infoImage}}" ng-mousedown="login.toggleInfo()" class="cursor-pointer" title="Click to see more info" />
+      Connect Ledger Hardware Wallet <img ng-src="{{login.infoImage}}" ng-mousedown="login.toggleInfo()" style="cursor: pointer;" title="Click me" />
       <br/>
       <div class="loginBox__info" ng-show="login.showInfo">
         Available on Chrome and Opera. Install the Stellar app from Ledger and enable browser support in the app settings.

@@ -2,50 +2,54 @@
   min-width: 42em;
 }
 
-.historyTable__row--header {
-  border-bottom: 2px solid $s-color-neutral6;
-}
-.historyTable__row--data:nth-child(odd) {
-  background: $s-color-neutral8;
-}
-.historyTable__row--data:hover {
-  background: $s-color-neutral7;
-}
-
-.historyTable__cell {
-  padding: 0.5em 0.5em;
-}
-
-@include r-media(xl) {
-  .historyTable__cell {
-    padding: 0.5em 1em;
+  .historyTable__row--header {
+    border-bottom: 2px solid $s-color-neutral6;
   }
-}
+  .historyTable__row--data:nth-child(odd) {
+    background: $s-color-neutral8;
+  }
+  .historyTable__row--data:hover {
+    background: $s-color-neutral7;
+  }
 
-.historyTable__accountID {
-  word-break: break-all;
-}
+  .historyTable__cell {
+    padding: 0.5em 0.5em;
+  }
+  @include r-media(xl) {
+    .historyTable__cell {
+      padding: 0.5em 1em;
+    }
+  }
 
-.historyTable__amount__number {
-  white-space: nowrap;
-}
+  .historyTable__date {
+    // white-space: nowrap;
+  }
+  .historyTable__accountID {
+    word-break: break-all;
+  }
+  .historyTable__amount {
+    text-align: right;
+  }
+    .historyTable__amount__number {
+      white-space: nowrap;
+    }
+    .historyTable__amount__number--debit {
+      color: $s-color-alert;
+    }
+    .historyTable__amount__code {
+      background: $s-color-primary8;
+      border-radius: $s-var-radius;
+      white-space: nowrap;
+    }
+  .historyTable__memo {
 
-.historyTable__amount__number--debit {
-  color: $s-color-alert;
-}
-
-.historyTable__amount__code {
-  background: $s-color-primary8;
-  border-radius: $s-var-radius;
-  white-space: nowrap;
-}
-
-.historyTable__memo__data {
-  background: $s-color-primary8;
-  border-radius: $s-var-radius;
-  border-radius: $s-var-radius;
-  word-break: break-all;
-}
-.historyTable__details {
-  white-space: nowrap;
-}
+  }
+    .historyTable__memo__data {
+      background: $s-color-primary8;
+      border-radius: $s-var-radius;
+      border-radius: $s-var-radius;
+      word-break: break-all;
+    }
+  .historyTable__details {
+    white-space: nowrap;
+  }
