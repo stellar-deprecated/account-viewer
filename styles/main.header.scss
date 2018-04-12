@@ -4,6 +4,7 @@
 @import "solar-stellarorg/lib/index";
 @import "solar-stellarorg/styles/index";
 
+
 @import "siteHeader";
 
 @import "loginBox";
@@ -23,26 +24,11 @@
 @import "history";
 @import "historyTable";
 
-// Define some utility classes
-.left { text-align: left; }
-.right { text-align: right; }
-.center { text-align: center; }
-.cursor-pointer { cursor: pointer; }
 
 .sendSetup, .sendConfirm, .sendWaiting, .sendOutcome {
   max-width: 36em;
   margin: 0 auto 3em 0;
 }
-
 .sendConfirm, .sendWaiting, .sendOutcome {
   margin: 0 auto 3em auto;
-}
-
-@keyframes loading {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.loading {
-  animation: loading 2s linear infinite;
 }
