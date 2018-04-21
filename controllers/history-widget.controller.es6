@@ -26,15 +26,23 @@ export default class HistoryWidgetController {
   }
 
   visiblePayments() {
-    if (!this.hideSmallAmounts) {
+    if (this.hideSmallAmounts) {
+      return this.filteredPayments();
+    } else {
       return this.payments;
     }
+  }
 
+  filteredPayments() {
     return this.payments.filter(payment => Number(payment.amount) >= MINIMUM_AMOUNT_TO_DISPLAY);
   }
 
   toggleDisplaySmallAmounts() {
     this.hideSmallAmounts = !this.hideSmallAmounts;
+  }
+
+  showSmallAmountsToggle() {
+    return this.filteredPayments().length !== this.payments.length;
   }
 
   loadPayments() {
