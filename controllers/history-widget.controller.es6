@@ -52,7 +52,7 @@ export default class HistoryWidgetController {
           this.showLengthLimitAlert = true;
         }
 
-        this.setupSteaming();
+        this.setupStreaming();
       })
       .catch(e => {
         if (e.name === 'NotFoundError') {
@@ -69,7 +69,7 @@ export default class HistoryWidgetController {
       });
   }
 
-  setupSteaming() {
+  setupStreaming() {
     // Setup event stream
     let cursor;
     if (this.payments.length > 0) {
