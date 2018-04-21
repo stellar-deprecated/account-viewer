@@ -2,7 +2,7 @@ import {Widget, Inject} from 'interstellar-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
-const MINIMUM_AMOUNT_TO_DISPLAY = 0.01
+const MINIMUM_AMOUNT_TO_DISPLAY = 0.5
 
 @Widget('history', 'HistoryWidgetController', 'interstellar-basic-client/history-widget')
 @Inject("$scope", "interstellar-sessions.Sessions", "interstellar-network.Server")
