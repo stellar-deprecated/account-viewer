@@ -2,8 +2,6 @@ import {Widget, Inject} from 'interstellar-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
-const MINIMUM_AMOUNT_TO_DISPLAY = 0.01
-
 @Widget('history', 'HistoryWidgetController', 'interstellar-basic-client/history-widget')
 @Inject("$scope", "interstellar-sessions.Sessions", "interstellar-network.Server")
 export default class HistoryWidgetController {
@@ -20,21 +18,30 @@ export default class HistoryWidgetController {
     this.payments = [];
     this.loading = true;
     this.showLengthLimitAlert = false;
+    this.minimumAmountToDisplay = 0.5;
     this.hideSmallAmounts = true;
 
     this.loadPayments();
   }
 
   visiblePayments() {
-    if (!this.hideSmallAmounts) {
+    if (this.hideSmallAmounts) {
+      return this.filteredPayments();
+    } else {
       return this.payments;
     }
+  }
 
-    return this.payments.filter(payment => Number(payment.amount) >= MINIMUM_AMOUNT_TO_DISPLAY);
+  filteredPayments() {
+    return this.payments.filter(payment => Number(payment.amount) >= this.minimumAmountToDisplay);
   }
 
   toggleDisplaySmallAmounts() {
     this.hideSmallAmounts = !this.hideSmallAmounts;
+  }
+
+  showSmallAmountsToggle() {
+    return this.filteredPayments().length !== this.payments.length;
   }
 
   loadPayments() {
@@ -52,7 +59,7 @@ export default class HistoryWidgetController {
           this.showLengthLimitAlert = true;
         }
 
-        this.setupSteaming();
+        this.setupStreaming();
       })
       .catch(e => {
         if (e.name === 'NotFoundError') {
@@ -69,7 +76,7 @@ export default class HistoryWidgetController {
       });
   }
 
-  setupSteaming() {
+  setupStreaming() {
     // Setup event stream
     let cursor;
     if (this.payments.length > 0) {

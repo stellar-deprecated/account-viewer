@@ -6,19 +6,21 @@
   </p>
 
   <div class="history__table" ng-if="widget.payments.length > 0">
-    <p ng-if="widget.hideSmallAmounts">
-      <small>
-        This tool is hiding payments smaller than 0.01 XLM.
-        <button ng-click="widget.toggleDisplaySmallAmounts()">View All</button>
-      </small>
-    </p>
+    <div ng-if="widget.showSmallAmountsToggle()">
+      <p ng-if="widget.hideSmallAmounts">
+        <small>
+          This tool is hiding payments smaller than {{widget.minimumAmountToDisplay}} XLM. <br />
+          <button ng-click="widget.toggleDisplaySmallAmounts()" class="s-button s-button__light">View all payments</button>
+        </small>
+      </p>
 
-    <p ng-if="!widget.hideSmallAmounts">
-      <small>
-        This tool is showing payments smaller than 0.01 XLM.
-        <button ng-click="widget.toggleDisplaySmallAmounts()">Hide them instead</button>
-      </small>
-    </p>
+      <p ng-if="!widget.hideSmallAmounts">
+        <small>
+          This tool is showing all payments, including payments smaller than {{widget.minimumAmountToDisplay}} XLM. <br />
+          <button ng-click="widget.toggleDisplaySmallAmounts()" class="s-button s-button__light">Hide small payments</button>
+        </small>
+      </p>
+    </div>
 
     <table class="historyTable">
       <tr class="historyTable__row historyTable__row--header">
