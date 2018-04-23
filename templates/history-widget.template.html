@@ -9,14 +9,14 @@
     <div ng-if="widget.showSmallAmountsToggle()">
       <p ng-if="widget.hideSmallAmounts">
         <small>
-          This tool is hiding payments smaller than 0.5 XLM. <br />
+          This tool is hiding payments smaller than {{widget.minimumAmountToDisplay}} XLM. <br />
           <button ng-click="widget.toggleDisplaySmallAmounts()" class="s-button s-button__light">View all payments</button>
         </small>
       </p>
 
       <p ng-if="!widget.hideSmallAmounts">
         <small>
-          This tool is showing all payments, including payments smaller than 0.5 XLM. <br />
+          This tool is showing all payments, including payments smaller than {{widget.minimumAmountToDisplay}} XLM. <br />
           <button ng-click="widget.toggleDisplaySmallAmounts()" class="s-button s-button__light">Hide small payments</button>
         </small>
       </p>

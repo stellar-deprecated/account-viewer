@@ -2,8 +2,6 @@ import {Widget, Inject} from 'interstellar-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
-const MINIMUM_AMOUNT_TO_DISPLAY = 0.5
-
 @Widget('history', 'HistoryWidgetController', 'interstellar-basic-client/history-widget')
 @Inject("$scope", "interstellar-sessions.Sessions", "interstellar-network.Server")
 export default class HistoryWidgetController {
@@ -20,6 +18,7 @@ export default class HistoryWidgetController {
     this.payments = [];
     this.loading = true;
     this.showLengthLimitAlert = false;
+    this.minimumAmountToDisplay = 0.5;
     this.hideSmallAmounts = true;
 
     this.loadPayments();
@@ -34,7 +33,7 @@ export default class HistoryWidgetController {
   }
 
   filteredPayments() {
-    return this.payments.filter(payment => Number(payment.amount) >= MINIMUM_AMOUNT_TO_DISPLAY);
+    return this.payments.filter(payment => Number(payment.amount) >= this.minimumAmountToDisplay);
   }
 
   toggleDisplaySmallAmounts() {
