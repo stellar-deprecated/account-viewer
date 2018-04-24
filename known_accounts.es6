@@ -22,6 +22,10 @@ const knownAccounts = {
   'GC4KAS6W2YCGJGLP633A6F6AKTCV4WSLMTMIQRSEQE5QRRVKSX7THV6S': {
     name: 'BitcoinIndonesia',
     requiredMemoType: 'MEMO_TEXT'
+  },
+  'GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A': {
+    name: 'Binance',
+    requiredMemoType: 'MEMO_ID'
   }
 };
 export default knownAccounts;
