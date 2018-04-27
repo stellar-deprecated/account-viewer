@@ -426,11 +426,15 @@ export default class SendWidgetController {
       })
       .then(transaction => {
         this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
-        return this.Server.submitTransaction(transaction);
-      })
-      .then(this._submitOnSuccess.bind(this))
-      .catch(this._submitOnFailure.bind(this))
-      .finally(this._submitFinally.bind(this));
+        if(this._requiresAdditionalSigners()) {
+          return this.showView(null, 'additionalSigners');
+        } else { 
+          return this.Server.submitTransaction(transaction)
+            .then(this._submitOnSuccess.bind(this))
+            .catch(this._submitOnFailure.bind(this))
+            .finally(this._submitFinally.bind(this));
+        }
+      });
   }
 
   _submitOnSuccess() {
@@ -469,5 +473,11 @@ export default class SendWidgetController {
   _submitFinally() {
     this.showView(null, 'sendOutcome');
     this.$scope.$apply()
+  }
+
+  _requiresAdditionalSigners() {
+    let account = this.session.getAccount();
+    let accountSignerWeight = account.signers.find(signer => signer.key === account.id).weight;
+    return accountSignerWeight < account.thresholds.med_threshold;
   }
 }

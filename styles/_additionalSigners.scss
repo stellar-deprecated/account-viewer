@@ -1,0 +1,17 @@
+.additionalSigners {
+}
+  .additionalSigners__label {
+    text-align: center;
+    font-size: $s-scale-3;
+  }
+  .additionalSigners__xdr {
+    background: $s-color-neutral8;
+    padding: 1em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  .additionalSigners__return {
+    display: block;
+    margin: 0 auto;
+  }

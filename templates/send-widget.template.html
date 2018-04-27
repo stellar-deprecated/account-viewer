@@ -150,4 +150,16 @@
 
     <button class="s-button sendOutcome__return" ng-if="widget.success || !widget.needsResubmit" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
   </div>
+
+  <div class="additionalSigners" ng-if="widget.view === 'additionalSigners'">
+    <p class="additionalSigners__label">Requires more signatures</p>
+    
+    <p>This transaction requires additional signatures before it can be submitted.</p>
+    <p>Copy the transaction XDR below and add the required signatures before submitting it to the network.</p>
+    
+    <pre class="additionalSigners__xdr"><code>{{widget.lastTransactionXDR}}</code></pre>
+    
+    <button class="s-button additionalSigners__return" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
+  </div>
+
 </div>
