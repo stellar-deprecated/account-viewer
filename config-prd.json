@@ -1,6 +1,9 @@
 {
   "inviteServer": "https://invite.stellar.org",
   "permanentSession": false,
+  "stellarGuard": {
+    "usePublicNetwork": true
+  },
   "modules": {
     "interstellar-network": {
       "networkPassphrase": "Public Global Stellar Network ; September 2015",

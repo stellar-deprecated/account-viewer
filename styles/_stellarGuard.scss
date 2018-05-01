@@ -1,0 +1,15 @@
+.stellarGuard {
+}
+  .stellarGuard__label {
+    text-align: center;
+    font-size: $s-scale-3;
+  }
+  .stellarGuard__code {
+    background: $s-color-neutral8;
+    padding: 1em;
+    white-space: pre-wrap;
+  }
+  .stellarGuard__return {
+    display: block;
+    margin: 0 auto;
+  }

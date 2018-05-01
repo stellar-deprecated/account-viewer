@@ -1,6 +1,9 @@
 {
   "inviteServer": "http://localhost:8002",
   "permanentSession": true,
+  "stellarGuard": {
+    "usePublicNetwork": false
+  },
   "modules": {
     "interstellar-network": {
       "networkPassphrase": "Test SDF Network ; September 2015",
