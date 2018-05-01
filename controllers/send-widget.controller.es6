@@ -8,13 +8,14 @@ import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
 import LedgerTransport from '@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
+import StellarGuardSdk from '@stellarguard/sdk';
 
 const BASE_RESERVE = 0.5;
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
-@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
+@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts", "interstellar-core.Config")
 export default class SendWidgetController {
-  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts) {
+  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts, Config) {
     if (!Sessions.hasDefault()) {
       console.error('No session');
       return;
@@ -82,6 +83,12 @@ export default class SendWidgetController {
 
     this.useLedger = this.session.data && this.session.data['useLedger'];
     this.bip32Path = this.session.data && this.session.data['bip32Path'];
+
+    if(Config.get("stellarGuard").usePublicNetwork) {
+      StellarGuardSdk.usePublicNetwork();
+    } else {
+      StellarGuardSdk.useTestNetwork();
+    }
   }
 
   loadDestination($event) {
@@ -426,8 +433,14 @@ export default class SendWidgetController {
       })
       .then(transaction => {
         this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
-        if(this._requiresAdditionalSigners()) {
-          return this.showView(null, 'additionalSigners');
+        
+        let account = this.session.getAccount();
+        if(this._requiresAdditionalSigners(account)) {
+          if(StellarGuardSdk.hasStellarGuard(account)) {
+            return this._submitToStellarGuard(transaction);
+          } else {
+            return this.showView(null, 'additionalSigners');
+          }
         } else { 
           return this.Server.submitTransaction(transaction)
             .then(this._submitOnSuccess.bind(this))
@@ -439,6 +452,11 @@ export default class SendWidgetController {
 
   _submitOnSuccess() {
     this.success = true;
+    this._clear();
+    this.$rootScope.$broadcast('account-viewer.transaction-success');
+  }
+
+  _clear() {
     this.destinationAddress = null;
     this.destination = null;
     this.amount = null;
@@ -447,7 +465,6 @@ export default class SendWidgetController {
     this.memoValue = null;
     this.lastTransactionXDR = null;
     this.memoWarningAlertGroup.clear();
-    this.$rootScope.$broadcast('account-viewer.transaction-success');
   }
 
   _submitOnFailure(e) {
@@ -475,9 +492,22 @@ export default class SendWidgetController {
     this.$scope.$apply()
   }
 
-  _requiresAdditionalSigners() {
-    let account = this.session.getAccount();
+  _requiresAdditionalSigners(account) {
     let accountSignerWeight = account.signers.find(signer => signer.key === account.id).weight;
     return accountSignerWeight < account.thresholds.med_threshold;
+  }
+
+  _submitToStellarGuard(transaction) {
+    return StellarGuardSdk.submitTransaction(transaction)
+      .then(result => {
+        this.success = true;
+      }).catch(e => {
+        this.success = false;
+        this.outcomeMessage = e.response && e.response.data && e.response.data.message;
+      }).finally(() => {
+        this._clear();
+        this.showView(null, 'stellarGuardOutcome');
+        this.$scope.$apply();
+      });
   }
 }
