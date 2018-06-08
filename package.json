@@ -13,8 +13,8 @@
     "url": "http://github.com/stellar/account-viewer.git"
   },
   "dependencies": {
-    "@ledgerhq/hw-app-str": "4.2.0",
-    "@ledgerhq/hw-transport-u2f": "4.2.0",
+    "@ledgerhq/hw-app-str": "^4.14.0",
+    "@ledgerhq/hw-transport-u2f": "^4.13.0",
     "babel-runtime": "^6.26.0",
     "bignumber.js": "^2.0.8",
     "interstellar-core": "~0.0.4",
