@@ -33,7 +33,17 @@ export default class HistoryWidgetController {
   }
 
   filteredPayments() {
-    return this.payments.filter(payment => payment.type === 'account_merge' || Number(payment.amount) >= this.minimumAmountToDisplay);
+    return this.payments.filter(payment => {
+      if (payment.type === 'account_merge') {
+        return true;
+      }
+
+      if (payment.from === this.address) {
+        return true;
+      }
+
+      return new BigNumber(payment.amount).gte(this.minimumAmountToDisplay);
+    });
   }
 
   toggleDisplaySmallAmounts() {
