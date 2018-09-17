@@ -137,6 +137,10 @@
     <div ng-if="!widget.success">
       <p class="sendOutcome__label">Transaction failed</p>
 
+      <p class="" ng-if="widget.signingErrorMessage">
+        <strong>Could not sign transaction: </strong> {{widget.signingErrorMessage}}
+      </p>
+
       <p class="" ng-if="widget.needsResubmit">
         <strong>Warning</strong> We submitted your transaction to the network but because of the network conditions we are
         not certain about it's status: it could either succeed or fail. Instead of recreating the transaction you should use

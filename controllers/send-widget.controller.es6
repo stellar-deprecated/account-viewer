@@ -8,6 +8,8 @@ import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
 import LedgerTransport from '@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
+import {Network} from "stellar-base";
+import TrezorConnect from 'trezor-connect';
 
 const BASE_RESERVE = 0.5;
 
@@ -80,7 +82,11 @@ export default class SendWidgetController {
     });
     Alerts.registerGroup(this.memoWarningAlertGroup);
 
+    // Used to display additional details on the "outcome" page describing why signing failed
+    this.signingErrorMessage = null;
+
     this.useLedger = this.session.data && this.session.data['useLedger'];
+    this.useTrezor = this.session.data && this.session.data['useTrezor'];
     this.bip32Path = this.session.data && this.session.data['bip32Path'];
   }
 
@@ -201,6 +207,7 @@ export default class SendWidgetController {
 
     this.sending = true;
     this.ledgerError = false;
+    this.signingErrorMessage = null;
 
     this.addressAlertGroup.clear();
     this.amountAlertGroup.clear();
@@ -345,7 +352,9 @@ export default class SendWidgetController {
           asset: Asset.native(),
           amount: this.amount
         });
-        return this._submitTransaction(operation);
+        return this._submitTransaction(operation)
+            .catch(this._preSubmitOnFailure.bind(this))
+            .finally(this._submitFinally.bind(this));
       })
       .catch(err => {
         if (err.name === 'NotFoundError') {
@@ -363,6 +372,7 @@ export default class SendWidgetController {
 
   resubmitTransaction() {
     if (this.lastTransactionXDR === null) {
+      this.showView(null, 'sendSetup');
       return;
     }
 
@@ -419,7 +429,71 @@ export default class SendWidgetController {
               throw e;
             });
           })
-        } else {
+        }
+        else if (this.useTrezor) {
+          /*
+          'memo' must always be present in the transaction parameters so default it
+          to type 0 (no memo)
+           */
+          let trezorMemoParams = { type: 0 };
+
+          // If there is a memo, convert it to the correct value for the Trezor
+          if (this.memo) {
+            switch (this.memoType) {
+              case 'MEMO_TEXT':
+                trezorMemoParams = { type: 1, text: this.memoValue };
+                break;
+              case 'MEMO_ID':
+                trezorMemoParams = { type: 2, id: this.memoValue };
+                break;
+              case 'MEMO_HASH':
+                trezorMemoParams = { type: 3, hash: this.memoValue };
+                break;
+              case 'MEMO_RETURN':
+                trezorMemoParams = { type: 4, hash: this.memoValue };
+                break;
+            }
+          }
+
+          // Object sent to the Trezor API
+          // Documentation at: https://github.com/trezor/connect/blob/develop/docs/methods/stellarSignTransaction.md
+          let trezorTxParams = {
+            path: 'm/' + this.bip32Path,
+            networkPassphrase: Network.current().networkPassphrase(),
+            transaction: {
+              source: this.session.address,
+              fee: transaction.fee,
+              sequence: transaction.sequence,
+              memo: trezorMemoParams,
+              operations: [
+                {
+                  type: 'payment',
+                  destination: transaction.operations[0].destination,
+                  // Trezor expects this in stroops
+                  amount: transaction.operations[0].amount * 10000000
+                }
+              ]
+            }
+          };
+
+          return TrezorConnect.stellarSignTransaction(trezorTxParams)
+            .then((result) => {
+              if (!result.success) {
+                this.signingErrorMessage = "Trezor: " + result.payload.error;
+                throw new BasicClientError("TrezorError", { message: result.payload.error });
+              }
+
+              // Convert hex string returned from Trezor into binary
+              let signature = this._hexToByteArray(result.payload.signature);
+              let keyPair = Keypair.fromAccountId(this.session.address);
+              let hint = keyPair.signatureHint();
+              let decorated = new xdr.DecoratedSignature({hint, signature});
+              transaction.signatures.push(decorated);
+
+              return transaction;
+            });
+        }
+        else {
           transaction.sign(Keypair.fromSeed(this.session.getSecret()));
           return transaction;
         }
@@ -448,6 +522,11 @@ export default class SendWidgetController {
     this.lastTransactionXDR = null;
     this.memoWarningAlertGroup.clear();
     this.$rootScope.$broadcast('account-viewer.transaction-success');
+  }
+
+  _preSubmitOnFailure(e) {
+      this.success = false;
+      this.needsResubmit = true;
   }
 
   _submitOnFailure(e) {
@@ -479,5 +558,27 @@ export default class SendWidgetController {
     let account = this.session.getAccount();
     let accountSignerWeight = account.signers.find(signer => signer.key === account.id).weight;
     return accountSignerWeight < account.thresholds.med_threshold;
+  }
+
+  _byteArrayToBase64(buffer) {
+    buffer = buffer.slice();
+    let binary = '';
+    let bytes = new Uint8Array( buffer );
+    let len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa( binary );
+  }
+
+  _hexToByteArray(str) {
+    let result = [];
+    while (str.length >= 2) {
+      result.push(parseInt(str.substring(0, 2), 16));
+
+      str = str.substring(2, str.length);
+    }
+
+    return new Uint8Array(result);
   }
 }
