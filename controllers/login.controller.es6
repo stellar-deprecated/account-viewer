@@ -4,6 +4,7 @@ import {Keypair} from 'stellar-sdk';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
 import LedgerTransport from '@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
+import TrezorConnect from 'trezor-connect';
 
 @Controller("LoginController")
 @Inject("$scope", "interstellar-core.Config", "interstellar-core.IntentBroadcast", "interstellar-sessions.Sessions", "interstellar-ui-messages.Alerts")
@@ -29,6 +30,11 @@ export default class LoginController {
     });
     this.bip32Path = "44'/148'/0'";
     this.connectLedger();
+
+    this.trezorAlertGroup = new AlertGroup();
+    this.trezorAlertGroup.registerUpdateListener(alerts => {
+        this.trezorAlerts = alerts;
+    });
 
     this.infoImage = require('../images/info.png');
     this.showInfo = false;
@@ -90,6 +96,35 @@ export default class LoginController {
       });
       this.ledgerAlertGroup.show(alert);
     }
+  }
+
+  proceedWithTrezor() {
+    let params = {
+      // Trezor requires "m/" prefix
+      path: 'm/' + this.bip32Path,
+      showOnTrezor: false // don't bother with the "confirm sharing address" prompt on the Trezor device
+    };
+
+    TrezorConnect.stellarGetAddress(params).then((result) => {
+        if (!result.success) {
+            let alert = new Alert({
+                title: 'Could not use Trezor',
+                text: result.payload.error,
+                type: Alert.TYPES.ERROR,
+                dismissible: true
+            });
+            this.trezorAlertGroup.show(alert);
+            // Necessary to get the alert to be rendered
+            this.$scope.$applyAsync();
+            return;
+        }
+
+        let permanent = this.Config.get("permanentSession");
+        let data = { useTrezor: true, bip32Path: this.bip32Path };
+        let address = result.payload.address;
+        this.Sessions.createDefault({address, data, permanent})
+          .then(() => this.broadcastShowDashboardIntent());
+    });
   }
 
   generate() {
