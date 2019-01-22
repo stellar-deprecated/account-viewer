@@ -49,24 +49,27 @@ export default class LoginController {
   }
 
   connectLedger() {
-    const openTimeout = 60 * 60 * 1000; // an hour
     this.ledgerStatus = 'Not connected';
-    LedgerTransport.create(openTimeout).then((transport) => {
-      new LedgerStr(transport).getAppConfiguration().then((result) =>{
+    LedgerTransport.create().then((transport) => {
+      return new LedgerStr(transport).getAppConfiguration().then((result) =>{
         this.ledgerStatus = 'Connected';
         this.ledgerAppVersion = result.version;
         this.$scope.$apply();
-      }).catch((err) => {
-        this.ledgerStatus = 'Error: ' + err;
-        this.$scope.$apply();
-      });
+      })
+    }).catch(err => {
+      console.log(err);
+      this.ledgerStatus = 'Error: ' + err;
+      this.$scope.$apply();
+
+      // Try again in 5 seconds:
+      console.log("Connecting to Ledger failed. Trying again in 5 seconds...");
+      setTimeout(this.connectLedger(), 5*1000);
     });
   }
 
   proceedWithLedger() {
-    const openTimeout = 60 * 1000; // one minute
     try {
-      LedgerTransport.create(openTimeout).then((transport) => {
+      LedgerTransport.create().then((transport) => {
         new LedgerStr(transport).getPublicKey(this.bip32Path).then((result) => {
           let permanent = this.Config.get("permanentSession");
           let data = { useLedger: true, bip32Path: this.bip32Path, ledgerAppVersion: this.ledgerAppVersion };
