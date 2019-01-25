@@ -53,15 +53,17 @@
         <button type="button" class="s-button loginBox__submit" ng-click="login.generate()">Generate</button>
     </div>
     <div class="middleBox">
-      Connect Ledger Hardware Wallet <img ng-src="{{login.infoImage}}" ng-mousedown="login.toggleInfo()" style="cursor: pointer;" title="Click me" />
+      Use Hardware Wallet
       <br/>
-      <div class="loginBox__info" ng-show="login.showInfo">
-        Available on Chrome and Opera. Install the Stellar app from Ledger and enable browser support in the app settings.
-      </div>
       <div class="loginBox__ledgerAccount">
         <input id="ledgerDefaultAccountCheckbox" type="checkbox" ng-model="hideBip32Input" ng-init="hideBip32Input=true" />
         <label for="ledgerDefaultAccountCheckbox" ng-if="hideBip32Input">Use default account</label>
         <input type="text" ng-model="login.bip32Path" class="loginBox__input" placeholder="BIP32 path: 44'/148'/n'" ng-if="!hideBip32Input" />
+      </div>
+
+      <button type="button" class="s-button loginBox__submit" ng-click="login.proceedWithLedger()" ng-disabled="login.ledgerStatus != 'Connected'">Sign in with Ledger</button>
+      <div class="loginBox__info">
+        Available on Chrome and Opera. Install the Stellar app from Ledger and enable browser support in the app settings.
       </div>
       <div class="s-alert s-alert--alert" ng-if="login.ledgerAlerts.length > 0">
         <span ng-repeat="alert in login.ledgerAlerts">
@@ -69,7 +71,17 @@
           {{alert.text}}
         </span>
       </div>
-      <button type="button" class="s-button loginBox__submit" ng-click="login.proceedWithLedger()" ng-disabled="login.ledgerStatus != 'Connected'">Sign in with Ledger</button>
+
+      <button type="button" class="s-button loginBox__submit" ng-click="login.proceedWithTrezor()">Sign in with Trezor</button>
+      <div class="loginBox__info">
+        Requires Trezor Bridge and Trezor One (with firmware 1.7.0+) or Trezor Model T (with firmware 2.0.8+).
+      </div>
+      <div class="s-alert s-alert--alert" ng-if="login.trezorAlerts.length > 0">
+        <span ng-repeat="alert in login.trezorAlerts">
+          {{alert.title}}<br /><br />
+          {{alert.text}}
+        </span>
+      </div>
     </div>
     <div class="middleBox">
       Looking for a more advanced wallet? <a href="https://www.stellar.org/lumens/wallets/">Proceed here &raquo;</a>
