@@ -61,9 +61,11 @@ export default class LoginController {
       this.ledgerStatus = 'Error: ' + err;
       this.$scope.$apply();
 
-      // Try again in 5 seconds:
-      console.log("Connecting to Ledger failed. Trying again in 5 seconds...");
-      setTimeout(this.connectLedger(), 5*1000);
+      // Try again in 5 seconds if timeout error:
+      if (err.message && err.message.indexOf("U2F TIMEOUT") !== -1) {
+        console.log("Connecting to Ledger failed. Trying again in 5 seconds...");
+        setTimeout(this.connectLedger(), 5*1000);
+      }
     });
   }
 
