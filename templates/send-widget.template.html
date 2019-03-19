@@ -86,6 +86,39 @@
       </span>
     </div>
 
+    <p class="sendSetup__titleBar">Fee</p>
+    <div class="s-inputGroup sendSetup__fee">
+      <input ng-model="widget.fee" class="s-inputGroup__item sendSetup__fee__input" ng-class="{'s-inputAlert--alert': widget.feeAlerts.length > 0}" type="text" placeholder="Fee">
+      <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__fee__tag">
+        stroops
+      </span>
+    </div>
+    <p class="sendSetup__titleBar">
+      <span href="" class="sendSetup__titleBar__side">
+        <a href="https://medium.com/stellar-developers-blog/surge-pricing-on-stellar-faq-1cd6e4aa6010" target="_blank">what's a fee?</a>
+      </span>
+
+      <span class="network_congestion_normal" ng-if="widget.networkCongestion == 'low'">
+        Normal traffic
+      </span>
+
+      <span class="network_congestion_medium" ng-if="widget.networkCongestion == 'medium'">
+        Medium congestion!
+      </span>
+
+      <span class="network_congestion_high" ng-if="widget.networkCongestion == 'high'">
+        High congestion!
+      </span>
+
+      Recommended fee: <a ng-click="widget.setToRecommendedFee()">{{widget.recommendedFee}} stroops</a><br />
+      1 stroop = 0.0000001 lumen
+    </p>
+    <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.feeAlerts.length > 0">
+      <span ng-repeat="alert in widget.feeAlerts">
+        {{alert.title}} <span ng-bind-html="alert.text"></span>
+      </span>
+    </div>
+
     <button class="s-button sendSetup__submit" ng-class="{'is-disabled': widget.sending || widget.loadingDestination}" ng-disabled="widget.sending || widget.loadingDestination" type="submit" ng-click="widget.send()">Send lumens</button>
   </div>
 

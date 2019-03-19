@@ -2,7 +2,7 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import {Widget, Inject, Intent} from 'interstellar-core';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import {Account, Asset, Keypair, Memo, Operation, Transaction, TransactionBuilder, xdr} from 'stellar-sdk';
+import {Account, Asset, Keypair, Memo, Network, Operation, Server, StrKey, TimeoutInfinite, Transaction, TransactionBuilder, xdr} from 'stellar-sdk';
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
@@ -12,13 +12,15 @@ import LedgerStr from '@ledgerhq/hw-app-str';
 const BASE_RESERVE = 0.5;
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
-@Inject("$scope", "$rootScope", '$sce', "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
+@Inject("$scope", "$rootScope", '$sce', "interstellar-core.Config", "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
 export default class SendWidgetController {
-  constructor($scope, $rootScope, $sce, Sessions, Server, Alerts) {
+  constructor($scope, $rootScope, $sce, Config, Sessions, Server, Alerts) {
     if (!Sessions.hasDefault()) {
       console.error('No session');
       return;
     }
+
+    Network.use(new Network(Config.get('modules.interstellar-network.networkPassphrase')));
 
     this.view = 'sendSetup';
     this.$scope = $scope;
@@ -32,6 +34,9 @@ export default class SendWidgetController {
     this.memoValue = null;
     this.memoBlocked = false;
     this.stellarAddress = null;
+    this.fee = 100;
+    this.recommendedFee = 100;
+    this.networkCongestion = null;
     // Resolved destination (accountId/address)
     this.destination = null;
     // XDR of the last transaction submitted to horizon. Will be helpful resubmit is needed.
@@ -68,6 +73,12 @@ export default class SendWidgetController {
     });
     Alerts.registerGroup(this.amountAlertGroup);
 
+    this.feeAlertGroup = new AlertGroup();
+    this.feeAlertGroup.registerUpdateListener(alerts => {
+      this.feeAlerts = alerts;
+    });
+    Alerts.registerGroup(this.feeAlertGroup);
+
     this.memoErrorAlertGroup = new AlertGroup();
     this.memoErrorAlertGroup.registerUpdateListener(alerts => {
       this.memoErrorAlerts = alerts;
@@ -82,6 +93,31 @@ export default class SendWidgetController {
 
     this.useLedger = this.session.data && this.session.data['useLedger'];
     this.bip32Path = this.session.data && this.session.data['bip32Path'];
+
+    this.getFeeStats();
+  }
+
+  getFeeStats() {
+    new Server("https://horizon.stellar.org").operationFeeStats()
+      .then(stats => {
+        this.recommendedFee = stats.last_ledger_base_fee;
+
+        this.networkCongestion = 'low';
+        if (stats.ledger_capacity_usage > 0.5) {
+          this.networkCongestion = 'medium';
+          this.recommendedFee = stats.p60_accepted_fee;
+        } else if (stats.ledger_capacity_usage > 0.75) {
+          this.networkCongestion = 'high';
+          this.recommendedFee = stats.p80_accepted_fee;
+        }
+
+        setTimeout(this.getFeeStats.bind(this), 30*1000);
+      });
+  }
+
+  setToRecommendedFee() {
+    this.fee = this.recommendedFee;
+    return false;
   }
 
   loadDestination($event) {
@@ -205,8 +241,9 @@ export default class SendWidgetController {
     this.addressAlertGroup.clear();
     this.amountAlertGroup.clear();
     this.memoErrorAlertGroup.clear();
+    this.feeAlertGroup.clear();
 
-    if (!Account.isValidAccountId(this.destination)) {
+    if (!StrKey.isValidEd25519PublicKey(this.destination)) {
       let alert = new Alert({
         title: 'Stellar address or public key is invalid.',
         text: 'Public keys are uppercase and begin with the letter "G."',
@@ -223,6 +260,16 @@ export default class SendWidgetController {
         type: Alert.TYPES.ERROR
       });
       this.amountAlertGroup.show(alert);
+    }
+
+    // Check if fee is valid
+    if (this.fee < 100) {
+      let alert = new Alert({
+        title: '',
+        text: 'This fee is invalid.',
+        type: Alert.TYPES.ERROR
+      });
+      this.feeAlertGroup.show(alert);
     }
 
     if (this.memo) {
@@ -256,7 +303,7 @@ export default class SendWidgetController {
       }
     }
 
-    if (this.addressAlerts.length || this.amountAlerts.length || this.memoErrorAlerts.length) {
+    if (this.addressAlerts.length || this.amountAlerts.length || this.memoErrorAlerts.length || this.feeAlerts.length) {
       this.sending = false;
       return;
     }
@@ -398,9 +445,15 @@ export default class SendWidgetController {
           }
         }
 
-        let transaction = new TransactionBuilder(this.session.getAccount())
+        let timeout = 5*60;;
+        if (this._requiresAdditionalSigners()) {
+          timeout = TimeoutInfinite;
+        }
+
+        let transaction = new TransactionBuilder(this.session.getAccount(), {fee: this.fee})
           .addOperation(operation)
           .addMemo(memo)
+          .setTimeout(timeout)
           .build();
 
         if (this.useLedger) {
@@ -409,7 +462,7 @@ export default class SendWidgetController {
             const ledgerApi = new LedgerStr(transport);
             return ledgerApi.signTransaction(this.bip32Path, transaction.signatureBase()).then(result => {
               let signature = result['signature'];
-              let keyPair = Keypair.fromAccountId(this.session.address);
+              let keyPair = Keypair.fromPublicKey(this.session.address);
               let hint = keyPair.signatureHint();
               let decorated = new xdr.DecoratedSignature({hint, signature});
               transaction.signatures.push(decorated);
@@ -420,7 +473,7 @@ export default class SendWidgetController {
             });
           })
         } else {
-          transaction.sign(Keypair.fromSeed(this.session.getSecret()));
+          transaction.sign(Keypair.fromSecret(this.session.getSecret()));
           return transaction;
         }
       })
@@ -442,6 +495,7 @@ export default class SendWidgetController {
     this.destinationAddress = null;
     this.destination = null;
     this.amount = null;
+    this.fee = 100;
     this.memo = false;
     this.memoType = null;
     this.memoValue = null;
