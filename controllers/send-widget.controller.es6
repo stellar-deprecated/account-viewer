@@ -16,8 +16,8 @@ function stroopsToLumens(stroops) {
   return new BigNumber(stroops).div(STROOPS_IN_LUMEN);
 }
 
-function lumensToStroops(stroops) {
-  return new BigNumber(stroops).mul(STROOPS_IN_LUMEN);
+function lumensToStroops(lumens) {
+  return new BigNumber(lumens).mul(STROOPS_IN_LUMEN);
 }
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
