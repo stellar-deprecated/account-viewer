@@ -90,7 +90,7 @@
     <div class="s-inputGroup sendSetup__fee">
       <input ng-model="widget.fee" class="s-inputGroup__item sendSetup__fee__input" ng-class="{'s-inputAlert--alert': widget.feeAlerts.length > 0}" type="text" placeholder="Fee">
       <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__fee__tag">
-        stroops
+        lumens
       </span>
     </div>
     <p class="sendSetup__titleBar">
@@ -110,8 +110,7 @@
         High congestion!
       </span>
 
-      Recommended fee: <a ng-click="widget.setToRecommendedFee()">{{widget.recommendedFee}} stroops</a><br />
-      1 stroop = 0.0000001 lumen
+      Recommended fee: <a ng-click="widget.setToRecommendedFee()">{{widget.recommendedFee}} lumens</a>
     </p>
     <div class="s-alert s-alert--alert sendSetup__error" ng-if="widget.feeAlerts.length > 0">
       <span ng-repeat="alert in widget.feeAlerts">

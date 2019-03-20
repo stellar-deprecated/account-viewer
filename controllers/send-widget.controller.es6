@@ -10,6 +10,15 @@ import LedgerTransport from '@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
 
 const BASE_RESERVE = 0.5;
+const STROOPS_IN_LUMEN = Math.pow(10, 7);
+
+function stroopsToLumens(stroops) {
+  return new BigNumber(stroops).div(STROOPS_IN_LUMEN);
+}
+
+function lumensToStroops(stroops) {
+  return new BigNumber(stroops).mul(STROOPS_IN_LUMEN);
+}
 
 @Widget('send', 'SendWidgetController', 'interstellar-basic-client/send-widget')
 @Inject("$scope", "$rootScope", '$sce', "interstellar-core.Config", "interstellar-sessions.Sessions", "interstellar-network.Server", "interstellar-ui-messages.Alerts")
@@ -34,8 +43,9 @@ export default class SendWidgetController {
     this.memoValue = null;
     this.memoBlocked = false;
     this.stellarAddress = null;
-    this.fee = 100;
-    this.recommendedFee = 100;
+    this.minimumFee = stroopsToLumens(100);
+    this.fee = this.minimumFee;
+    this.recommendedFee = this.minimumFee;
     this.networkCongestion = null;
     // Resolved destination (accountId/address)
     this.destination = null;
@@ -75,6 +85,10 @@ export default class SendWidgetController {
 
     this.feeAlertGroup = new AlertGroup();
     this.feeAlertGroup.registerUpdateListener(alerts => {
+      // Some amount alert messages contain HTML
+      for (let alert of alerts) {
+        alert._text = $sce.trustAsHtml(alert._text)
+      }
       this.feeAlerts = alerts;
     });
     Alerts.registerGroup(this.feeAlertGroup);
@@ -100,15 +114,16 @@ export default class SendWidgetController {
   getFeeStats() {
     new Server("https://horizon.stellar.org").operationFeeStats()
       .then(stats => {
-        this.recommendedFee = stats.last_ledger_base_fee;
+        this.recommendedFee = stroopsToLumens(stats.last_ledger_base_fee);
+        this.minimumFee = stroopsToLumens(stats.last_ledger_base_fee);
 
         this.networkCongestion = 'low';
         if (stats.ledger_capacity_usage > 0.5) {
           this.networkCongestion = 'medium';
-          this.recommendedFee = stats.p60_accepted_fee;
+          this.recommendedFee = stroopsToLumens(stats.p60_accepted_fee);
         } else if (stats.ledger_capacity_usage > 0.75) {
           this.networkCongestion = 'high';
-          this.recommendedFee = stats.p80_accepted_fee;
+          this.recommendedFee = stroopsToLumens(stats.p80_accepted_fee);
         }
 
         setTimeout(this.getFeeStats.bind(this), 30*1000);
@@ -263,10 +278,10 @@ export default class SendWidgetController {
     }
 
     // Check if fee is valid
-    if (this.fee < 100) {
+    if (new BigNumber(this.fee).lt(this.minimumFee)) {
       let alert = new Alert({
         title: '',
-        text: 'This fee is invalid.',
+        text: `Minimum fee is ${this.minimumFee}.`,
         type: Alert.TYPES.ERROR
       });
       this.feeAlertGroup.show(alert);
@@ -450,7 +465,7 @@ export default class SendWidgetController {
           timeout = TimeoutInfinite;
         }
 
-        let transaction = new TransactionBuilder(this.session.getAccount(), {fee: this.fee})
+        let transaction = new TransactionBuilder(this.session.getAccount(), {fee: lumensToStroops(this.fee)})
           .addOperation(operation)
           .addMemo(memo)
           .setTimeout(timeout)
@@ -495,7 +510,7 @@ export default class SendWidgetController {
     this.destinationAddress = null;
     this.destination = null;
     this.amount = null;
-    this.fee = 100;
+    this.fee = this.minimumFee;
     this.memo = false;
     this.memoType = null;
     this.memoValue = null;
