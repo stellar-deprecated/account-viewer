@@ -8,6 +8,21 @@
     float: right;
   }
 
+  .network_congestion_normal {
+    color: green;
+    font-weight: bold;
+  }
+
+  .network_congestion_medium {
+    color: orange;
+    font-weight: bold;
+  }
+
+  .network_congestion_high {
+    color: red;
+    font-weight: bold;
+  }
+
   .sendSetup__destination {
     margin-bottom: 1em;
   }
@@ -45,8 +60,38 @@
     margin-bottom: 1em;
   }
 
+  .sendSetup__fee {
+    @include S-flex-row;
+  }
+  .sendSetup__fee__input {
+    @include S-flexItem-share;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    @include r-media(m) {
+      font-size: $s-scale-4;
+    }
+  }
+  .sendSetup__fee__tag {
+    display: flex;
+    align-items: center;
+
+    @include S-flexItem-noFlex;
+    border: 1px solid $s-color-neutral6;
+    border-left: none;
+
+    @include r-media(m) {
+      font-size: $s-scale-4;
+    }
+
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 0 1em;
+    background: $s-color-neutral8;
+  }
+
   .sendSetup__submit {
     width: 100%;
+    margin-top: 1em;
 
     @include r-media(s) {
       width: auto;
