@@ -17,6 +17,7 @@
     "@ledgerhq/hw-transport-u2f": "^4.13.0",
     "babel-runtime": "^6.26.0",
     "bignumber.js": "^2.0.8",
+    "interstellar": "https://github.com/stellar/interstellar.git#yarn",
     "interstellar-core": "~0.0.4",
     "interstellar-network": "~0.0.12",
     "interstellar-sessions": "~0.0.10",

@@ -100,8 +100,8 @@ export default class LoginController {
   generate() {
     let keypair = Keypair.random();
     this.newKeypair = {
-      publicKey: keypair.accountId(),
-      secretKey: keypair.seed()
+      publicKey: keypair.publicKey(),
+      secretKey: keypair.secret()
     };
   }
 
@@ -110,8 +110,8 @@ export default class LoginController {
     this.processing = true;
     let secret = this.secret;
     try {
-      let keypair = Keypair.fromSeed(secret);
-      let address = keypair.accountId();
+      let keypair = Keypair.fromSecret(secret);
+      let address = keypair.publicKey();
       let permanent = this.Config.get("permanentSession");
       this.Sessions.createDefault({address, secret, permanent})
         .then(() => {
