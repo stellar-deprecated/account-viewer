@@ -4,6 +4,7 @@ import {Keypair} from 'stellar-sdk';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
 import LedgerTransport from '@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
+import { logEvent } from "../metrics.es6";
 
 @Controller("LoginController")
 @Inject("$scope", "interstellar-core.Config", "interstellar-core.IntentBroadcast", "interstellar-sessions.Sessions", "interstellar-ui-messages.Alerts")
@@ -51,6 +52,7 @@ export default class LoginController {
   connectLedger() {
     this.ledgerStatus = 'Not connected';
     LedgerTransport.create().then((transport) => {
+      logEvent('login: connect ledger')
       return new LedgerStr(transport).getAppConfiguration().then((result) =>{
         this.ledgerStatus = 'Connected';
         this.ledgerAppVersion = result.version;
@@ -60,6 +62,10 @@ export default class LoginController {
       console.log(err);
       this.ledgerStatus = 'Error: ' + err;
       this.$scope.$apply();
+
+      logEvent('login: connect ledger: error', {
+        message: err.message, isHttps: location.protocol === 'https'
+      })
 
       // Try again in 5 seconds if timeout error:
       if (err.message && err.message.indexOf("U2F TIMEOUT") !== -1) {
@@ -98,6 +104,7 @@ export default class LoginController {
   }
 
   generate() {
+    logEvent('login: generate new kepair')
     let keypair = Keypair.random();
     this.newKeypair = {
       publicKey: keypair.publicKey(),
@@ -115,9 +122,11 @@ export default class LoginController {
       let permanent = this.Config.get("permanentSession");
       this.Sessions.createDefault({address, secret, permanent})
         .then(() => {
+          logEvent('login: success')
           this.broadcastShowDashboardIntent();
         });
     } catch(e) {
+      logEvent('login: error: invalid secret key')
       this.processing = false;
       let alert = new Alert({
         title: 'Invalid secret key',

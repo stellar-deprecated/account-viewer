@@ -6,6 +6,10 @@ import interstellarNetwork from "interstellar-network";
 import interstellarSessions from "interstellar-sessions";
 import interstellarUiMessages from "interstellar-ui-messages";
 
+import { logEvent } from './metrics.es6'
+
+logEvent('page: account viewer loaded')
+
 let config;
 if (INTERSTELLAR_ENV === 'prd') {
   config = require('./config-prd.json');

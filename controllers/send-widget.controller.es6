@@ -8,6 +8,7 @@ import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
 import LedgerTransport from '@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
+import { logEvent } from '../metrics.es6';
 
 const BASE_RESERVE = 0.5;
 const STROOPS_IN_LUMEN = Math.pow(10, 7);
@@ -145,7 +146,7 @@ export default class SendWidgetController {
       this.stellarAddress = null;
       this.loadingDestination = false;
       this.memoBlocked = false;
-      
+
     };
 
     if (!this.destinationAddress) {
@@ -249,6 +250,7 @@ export default class SendWidgetController {
     if (this.loadingDestination) {
       return false;
     }
+    logEvent('send: start')
 
     this.sending = true;
     this.ledgerError = false;
@@ -259,6 +261,7 @@ export default class SendWidgetController {
     this.feeAlertGroup.clear();
 
     if (!StrKey.isValidEd25519PublicKey(this.destination)) {
+      logEvent('send: error: invalid destination address')
       let alert = new Alert({
         title: 'Stellar address or public key is invalid.',
         text: 'Public keys are uppercase and begin with the letter "G."',
@@ -269,6 +272,7 @@ export default class SendWidgetController {
 
     // Check if amount is valid
     if (!Operation.isValidAmount(this.amount)) {
+      logEvent('send: error: invalid amount')
       let alert = new Alert({
         title: '',
         text: 'This amount is invalid.',
@@ -279,6 +283,7 @@ export default class SendWidgetController {
 
     // Check if fee is valid
     if (new BigNumber(this.fee).lt(this.minimumFee)) {
+      logEvent('send: error: fee too small')
       let alert = new Alert({
         title: '',
         text: `Minimum fee is ${this.minimumFee}.`,
@@ -356,6 +361,7 @@ export default class SendWidgetController {
       })
       .catch(err => {
         let alert;
+        logEvent('send: error', { type: err.name })
         switch (err.name) {
           case 'NotFoundError':
             alert = new Alert({
@@ -407,6 +413,12 @@ export default class SendWidgetController {
           asset: Asset.native(),
           amount: this.amount
         });
+        // We want to know about how large the transaction was, but not the exact
+        // amount. This gives us the magnitude to the nearest power of ten,
+        // rounded down.
+        logEvent('send: confirm transaction', {
+          amountSize: 10 ** (Math.floor(this.amount).toString().length - 1)
+        })
         return this._submitTransaction(operation);
       })
       .catch(err => {
@@ -496,7 +508,7 @@ export default class SendWidgetController {
         this.lastTransactionXDR = transaction.toEnvelope().toXDR().toString("base64");
         if(this._requiresAdditionalSigners()) {
           return this.showView(null, 'additionalSigners');
-        } else { 
+        } else {
           return this.Server.submitTransaction(transaction)
             .then(this._submitOnSuccess.bind(this))
             .catch(this._submitOnFailure.bind(this))
