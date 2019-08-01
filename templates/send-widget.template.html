@@ -1,9 +1,9 @@
 <div class="sendPane" ng-controller="interstellar-basic-client.SendWidgetController as widget">
   <h2 class="sendPane__title">Send lumens</h2>
   <div class="sendSetup" ng-if="widget.view == 'sendSetup'">
-    <p class="sendSetup__titleBar">To</p>
+    <label for="to" class="sendSetup__titleBar">To</label>
     <div class="sendSetup__destination">
-      <input ng-model="widget.destinationAddress" ng-blur="widget.loadDestination($event);" class="sendSetup__destination__input" ng-class="{'s-inputAlert--alert': widget.addressAlerts.length > 0}" placeholder="Recipient's public key or address" type="text">
+      <input name="to" ng-model="widget.destinationAddress" ng-blur="widget.loadDestination($event);" class="sendSetup__destination__input" ng-class="{'s-inputAlert--alert': widget.addressAlerts.length > 0}" placeholder="Recipient's public key or address" type="text">
     </div>
     <div class="s-alert s-alert--info sendSetup__info" ng-if="widget.loadingDestination">
       Loading federation info...
@@ -18,9 +18,9 @@
       </span>
     </div>
 
-    <p class="sendSetup__titleBar">Amount</p>
+    <label for="amount" class="sendSetup__titleBar">Amount</label>
     <div class="s-inputGroup sendSetup__amount">
-      <input ng-model="widget.amount" class="s-inputGroup__item sendSetup__amount__input" ng-class="{'s-inputAlert--alert': widget.amountAlerts.length > 0}" type="text" placeholder="Amount to send">
+      <input name="amount" ng-model="widget.amount" class="s-inputGroup__item sendSetup__amount__input" ng-class="{'s-inputAlert--alert': widget.amountAlerts.length > 0}" type="text" placeholder="Amount to send">
       <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__amount__tag">
         lumens
       </span>
@@ -35,24 +35,24 @@
       <p class="sendSetup__titleBar" ng-if="!widget.memo">
         <a href="#" ng-if="!widget.memoBlocked" ng-click="widget.showMemo($event);">Add memo</a>
         <span href="" class="sendSetup__titleBar__side">
-          <a href="https://www.stellar.org/developers/learn/concepts/transactions.html#memo" target="_blank">what's a memo?</a>
+          <a href="https://www.stellar.org/developers/learn/concepts/transactions.html#memo" target="_blank">What's a memo?</a>
         </span>
       </p>
       <div ng-if="widget.memo">
-        <p class="sendSetup__titleBar">Memo
+        <label for="memo-type" class="sendSetup__titleBar">Memo
           <span href="" class="sendSetup__titleBar__side">
-            <a href="https://www.stellar.org/developers/learn/concepts/transactions.html#memo" target="_blank">what's a memo?</a>
+            <a href="https://www.stellar.org/developers/learn/concepts/transactions.html#memo" target="_blank">What's a memo?</a>
             <span ng-if="!widget.memoBlocked"> |
               <a href="#" ng-click="widget.hideMemo($event);">cancel</a>
             </span>
           </span>
-        </p>
+        </label>
         <div class="s-inputGroup sendSetup__memo__memoSetup">
           <div class="so-dropdown sendSetup__memo__memoSetup__dropdown">
             <span
               class="s-inputGroup__item s-inputGroup__item--tag sendSetup__memo__memoSetup__selectTag"
               ng-class="{'is-disabled': widget.memoBlocked}">
-              <select ng-model="widget.memoType" ng-disabled="widget.memoBlocked"
+              <select name="memo-type" ng-model="widget.memoType" ng-disabled="widget.memoBlocked"
                 class="sendSetup__memo__memoSetup__selectTag__select so-dropdown__select"
                 ng-class="{'is-disabled': widget.memoBlocked}">
                 <option>MEMO_TEXT</option>
@@ -86,16 +86,16 @@
       </span>
     </div>
 
-    <p class="sendSetup__titleBar">Fee</p>
+    <label for="fee" class="sendSetup__titleBar">Fee</label>
     <div class="s-inputGroup sendSetup__fee">
-      <input ng-model="widget.fee" class="s-inputGroup__item sendSetup__fee__input" ng-class="{'s-inputAlert--alert': widget.feeAlerts.length > 0}" type="text" placeholder="Fee">
+      <input name="fee" ng-model="widget.fee" class="s-inputGroup__item sendSetup__fee__input" ng-class="{'s-inputAlert--alert': widget.feeAlerts.length > 0}" type="text" placeholder="Fee">
       <span class="s-inputGroup__item s-inputGroup__item--tag sendSetup__fee__tag">
         lumens
       </span>
     </div>
     <p class="sendSetup__titleBar">
       <span href="" class="sendSetup__titleBar__side">
-        <a href="https://medium.com/stellar-developers-blog/surge-pricing-on-stellar-faq-1cd6e4aa6010" target="_blank">what's a fee?</a>
+        <a href="https://medium.com/stellar-developers-blog/surge-pricing-on-stellar-faq-1cd6e4aa6010" target="_blank">What's a fee?</a>
       </span>
 
       <span class="network_congestion_normal" ng-if="widget.networkCongestion == 'low'">
@@ -185,12 +185,12 @@
 
   <div class="additionalSigners" ng-if="widget.view === 'additionalSigners'">
     <p class="additionalSigners__label">Requires more signatures</p>
-    
+
     <p>This transaction requires additional signatures before it can be submitted.</p>
     <p>Copy the transaction XDR below and add the required signatures before submitting it to the network.</p>
-    
+
     <pre class="additionalSigners__xdr"><code>{{widget.lastTransactionXDR}}</code></pre>
-    
+
     <button class="s-button additionalSigners__return" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
   </div>
 
