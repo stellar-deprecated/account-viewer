@@ -89,6 +89,7 @@ body {
   &:not([disabled]) {
     background-color: #7D00FF;
     border-color: #7D00FF;
+    color: white;
 
     &:hover {
       background-color: #6400CC;
