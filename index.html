@@ -5,6 +5,13 @@
   <title>Stellar Account Viewer</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
+  <script type="text/javascript">
+    var origin = window.location.origin;
+    var pathname = window.location.pathname;
+     if (pathname[pathname.length - 1] !== '/') {
+      window.location = `${origin}${pathname}/`
+    }
+  </script>
 </head>
 <body>
 <div ui-view>
