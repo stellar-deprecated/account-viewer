@@ -6,7 +6,7 @@
     border-bottom: 2px solid $s-color-neutral6;
   }
   .historyTable__row--data:nth-child(odd) {
-    background: $s-color-neutral8;
+    background: #fafafa;
   }
   .historyTable__row--data:hover {
     background: $s-color-neutral7;
@@ -37,7 +37,7 @@
       color: $s-color-alert;
     }
     .historyTable__amount__code {
-      background: $s-color-primary8;
+      background: rgba(125, 0, 255, .16);
       border-radius: $s-var-radius;
       white-space: nowrap;
     }
@@ -45,7 +45,7 @@
 
   }
     .historyTable__memo__data {
-      background: $s-color-primary8;
+      background: rgba(125, 0, 255, .16);
       border-radius: $s-var-radius;
       border-radius: $s-var-radius;
       word-break: break-all;

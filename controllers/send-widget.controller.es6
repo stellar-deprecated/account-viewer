@@ -374,7 +374,7 @@ export default class SendWidgetController {
             alert = new Alert({
               title: 'Insufficient balance.',
               text:
-                `To maintain your <a href="https://www.stellar.org/developers/learn/concepts/fees.html#minimum-balance" target="_blank">minimum balance</a>, the most you can currently send is ${err.data.maxSend}.`,
+                `To maintain your <a href="https://www.stellar.org/developers/guides/concepts/fees.html#minimum-balance" target="_blank">minimum balance</a>, the most you can currently send is ${err.data.maxSend}.`,
               type: Alert.TYPES.ERROR
             });
             break;
