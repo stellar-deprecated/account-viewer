@@ -35,13 +35,13 @@
       <p class="sendSetup__titleBar" ng-if="!widget.memo">
         <a href="#" ng-if="!widget.memoBlocked" ng-click="widget.showMemo($event);">Add memo</a>
         <span href="" class="sendSetup__titleBar__side">
-          <a href="https://www.stellar.org/developers/guide/concepts/transactions.html#memo" target="_blank">What's a memo?</a>
+          <a href="https://www.stellar.org/developers/guides/concepts/transactions.html#memo" target="_blank">What's a memo?</a>
         </span>
       </p>
       <div ng-if="widget.memo">
         <label for="memo-type" class="sendSetup__titleBar">Memo
           <span href="" class="sendSetup__titleBar__side">
-            <a href="https://www.stellar.org/developers/guide/concepts/transactions.html#memo" target="_blank">What's a memo?</a>
+            <a href="https://www.stellar.org/developers/guides/concepts/transactions.html#memo" target="_blank">What's a memo?</a>
             <span ng-if="!widget.memoBlocked"> |
               <a href="#" ng-click="widget.hideMemo($event);">cancel</a>
             </span>
