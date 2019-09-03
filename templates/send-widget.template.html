@@ -1,4 +1,7 @@
-<div class="sendPane" ng-controller="interstellar-basic-client.SendWidgetController as widget">
+<div class="so-back"
+ng-class="widget.view == 'sendWaiting' ? 'sendPane--pending' : 'sendPane--idle'" ng-controller="interstellar-basic-client.SendWidgetController as widget">
+  <div class="so-chunk">
+<div class="sendPane">
   <h2 class="sendPane__title">Send lumens</h2>
   <div class="sendSetup" ng-if="widget.view == 'sendSetup'">
     <label for="to" class="sendSetup__titleBar">To</label>
@@ -194,4 +197,7 @@
     <button class="s-button additionalSigners__return" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
   </div>
 
+</div>
+
+  </div>
 </div>
