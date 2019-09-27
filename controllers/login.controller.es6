@@ -14,6 +14,7 @@ export default class LoginController {
     this.Config = Config;
     this.IntentBroadcast = IntentBroadcast;
     this.Sessions = Sessions;
+    this.failedAttempts = 0;
 
     if (this.Sessions.hasDefault()) {
       this.broadcastShowDashboardIntent();
@@ -114,6 +115,18 @@ export default class LoginController {
 
   submit() {
     this.alertGroup.clear();
+
+    if (this.failedAttempts > 8) {
+      logEvent('login: error: rate limited')
+      let alert = new Alert({
+        title: "You're doing that too much",
+        text: 'Please wait a few seconds before attempting to log in again.',
+        type: Alert.TYPES.ERROR
+      });
+      this.alertGroup.show(alert);
+      return
+    }
+
     this.processing = true;
     let secret = this.secret;
     try {
@@ -127,6 +140,13 @@ export default class LoginController {
         });
     } catch(e) {
       logEvent('login: error: invalid secret key')
+
+      // Rate limit with exponential backoff.
+      this.failedAttempts++;
+      setTimeout(() => {
+        this.failedAttempts--
+      }, (2 ** this.failedAttempts) * 1000)
+
       this.processing = false;
       let alert = new Alert({
         title: 'Invalid secret key',
