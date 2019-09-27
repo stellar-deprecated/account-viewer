@@ -117,7 +117,6 @@ export default class LoginController {
     this.alertGroup.clear();
 
     if (this.failedAttempts > 8) {
-      logEvent('login: error: rate limited')
       let alert = new Alert({
         title: "You're doing that too much",
         text: 'Please wait a few seconds before attempting to log in again.',
