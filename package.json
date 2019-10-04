@@ -5,7 +5,7 @@
   "description": "A simple account-viewer",
   "scripts": {
     "start": "interstellar develop",
-    "test": "gulp test"
+    "build": "interstellar build --env=prd"
   },
   "author": "Stellar Development Foundation <stellar@stellar.org>",
   "license": "Apache-2.0",
