@@ -1,3 +1,5 @@
+import 'regenerator-runtime/runtime'
+
 require('./styles/main.header.scss');
 require('./styles/main.footer.scss');
 
