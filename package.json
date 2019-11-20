@@ -24,7 +24,7 @@
     "interstellar-network": "~0.0.12",
     "interstellar-sessions": "~0.0.10",
     "interstellar-ui-messages": "~0.0.3",
-    "lodash": "^3.10.1",
+    "lodash": "^4.17.13",
     "stellar-sdk": "^2.0.1"
   },
   "devDependencies": {
