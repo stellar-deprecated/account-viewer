@@ -3,8 +3,6 @@
 A simple tool to view an account on the Stellar network and make transactions
 from it.
 
-1. `npm install`
-
 ## Developing
 
 Because of the build tools used, this requires node 6 to build without errors.
@@ -20,15 +18,21 @@ nvm install 6
 nvm use 6
 ```
 
-Once you have that configured, you can run `yarn` to install deps and then start
+Once you have that configured, install deps and then start
 the project. Sass must be compiled targeting a specific node version, so if
 you've installed deps while running a node version other than 6, you'll need to
 `rm -rf node_modules`.
+
+We use yarn for dependencies.
+
+`yarn`
+
+To start the app in development mode, which will watch for changes to files, rebuild, and reload the site automatically, run the start script.
 
 `yarn start`
 
 ## Building for production
 
-To use production config file run the following command:
+The production build produces static files that expect to be served from an `/account-viewer/` base name.
 
 `yarn build`
