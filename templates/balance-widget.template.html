@@ -2,7 +2,7 @@
   <div class="so-chunk">
     <div class="dashboardOverviewRow" ng-if="widget.balanceLoaded">
       <p class="dashboardOverviewRow__label">Your balance:</p>
-      <p class="dashboardOverviewRow__text">{{widget.balance}} lumens</p>
+      <p class="dashboardOverviewRow__text">{{widget.balance-widget.balance%1 | number}}.<text style="color: #717577;">{{widget.balance%1 | number : 7 | limitTo : -7}}</text> lumens</p>
       <p ng-if="widget.showRefreshButton">
         <button class="s-button" ng-click="widget.loadAccount()">Refresh balance</button>
       </p>
