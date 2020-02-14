@@ -6,7 +6,7 @@ import {Account, Asset, Keypair, Memo, Network, Operation, Server, StrKey, Timeo
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
-import LedgerTransport from '@ledgerhq/hw-transport-u2f';
+import LedgerTransport from '../vendor/@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
 import { logEvent } from '../metrics.es6';
 
@@ -113,7 +113,7 @@ export default class SendWidgetController {
   }
 
   getFeeStats() {
-    new Server("https://horizon.stellar.org").operationFeeStats()
+    new Server("https://horizon.stellar.org").feeStats()
       .then(stats => {
         this.recommendedFee = stroopsToLumens(stats.last_ledger_base_fee);
         this.minimumFee = stroopsToLumens(stats.last_ledger_base_fee);

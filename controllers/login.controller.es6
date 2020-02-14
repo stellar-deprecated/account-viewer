@@ -2,7 +2,7 @@ import {Intent} from "interstellar-core";
 import {Controller, Inject} from "interstellar-core";
 import {Keypair} from 'stellar-sdk';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import LedgerTransport from '@ledgerhq/hw-transport-u2f';
+import LedgerTransport from '../vendor/@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
 import { logEvent } from "../metrics.es6";
 

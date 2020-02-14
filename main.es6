@@ -1,6 +1,7 @@
 require('./styles/main.header.scss');
 require('./styles/main.footer.scss');
 
+import "regenerator-runtime/runtime";
 import interstellarCore, {App, Intent} from "interstellar-core";
 import interstellarNetwork from "interstellar-network";
 import interstellarSessions from "interstellar-sessions";

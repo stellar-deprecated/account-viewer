@@ -1,7 +1,7 @@
 import {Widget, Inject} from 'interstellar-core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
-import LedgerTransport from '@ledgerhq/hw-transport-u2f';
+import LedgerTransport from '../vendor/@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
 
 @Widget('balance', 'BalanceWidgetController', 'interstellar-basic-client/balance-widget')

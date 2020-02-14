@@ -14,8 +14,9 @@
     "url": "http://github.com/stellar/account-viewer.git"
   },
   "dependencies": {
-    "@ledgerhq/hw-app-str": "^4.14.0",
-    "@ledgerhq/hw-transport-u2f": "^4.13.0",
+    "@ledgerhq/errors": "^5.9.0",
+    "@ledgerhq/hw-app-str": "^5.9.0",
+    "@ledgerhq/logs": "^5.9.0",
     "amplitude-js": "^5.2.2",
     "babel-runtime": "^6.26.0",
     "bignumber.js": "^2.0.8",
@@ -25,7 +26,9 @@
     "interstellar-sessions": "~0.0.10",
     "interstellar-ui-messages": "~0.0.3",
     "lodash": "^4.17.13",
-    "stellar-sdk": "^2.0.1"
+    "regenerator-runtime": "^0.13.3",
+    "stellar-sdk": "^2.0.1",
+    "u2f-api": "^1.1.1"
   },
   "devDependencies": {
     "gulp": "^3.9.0"
