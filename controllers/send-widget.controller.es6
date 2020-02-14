@@ -113,7 +113,7 @@ export default class SendWidgetController {
   }
 
   getFeeStats() {
-    new Server("https://horizon.stellar.org").operationFeeStats()
+    new Server("https://horizon.stellar.org").feeStats()
       .then(stats => {
         this.recommendedFee = stroopsToLumens(stats.last_ledger_base_fee);
         this.minimumFee = stroopsToLumens(stats.last_ledger_base_fee);
