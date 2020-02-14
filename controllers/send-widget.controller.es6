@@ -6,7 +6,7 @@ import {Account, Asset, Keypair, Memo, Network, Operation, Server, StrKey, Timeo
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
-import LedgerTransport from '@ledgerhq/hw-transport-u2f';
+import LedgerTransport from '../vendor/@ledgerhq/hw-transport-u2f';
 import LedgerStr from '@ledgerhq/hw-app-str';
 import { logEvent } from '../metrics.es6';
 
