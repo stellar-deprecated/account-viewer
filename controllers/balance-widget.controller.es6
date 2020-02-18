@@ -122,7 +122,7 @@ export default class BalanceWidgetController {
     } else {
       balance = 0;
     }
-    this.balance = new BigNumber(balance).toFormat();
+    this.balance = new BigNumber(balance).toNumber();
     this.balanceLoaded = true;
     this.$scope.$apply();
   }
