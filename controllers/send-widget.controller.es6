@@ -485,7 +485,9 @@ export default class SendWidgetController {
 
         if (this.useLedger) {
           const openTimeout = 60 * 1000; // one minute
+          const exchangeTimeout = 60 * 1000
           return LedgerTransport.create(openTimeout).then((transport) => {
+            transport.setExchangeTimeout(exchangeTimeout)
             const ledgerApi = new LedgerStr(transport);
             return ledgerApi.signTransaction(this.bip32Path, transaction.signatureBase()).then(result => {
               let signature = result['signature'];
