@@ -13,4 +13,4 @@ RUN apt-get update && apt-get install -y curl git make build-essential && \
 
 FROM nginx:1.17
 
-COPY --from=build /app/src/.tmp/webpacked/* /usr/share/nginx/html/
+COPY --from=build /app/src/.tmp/webpacked /usr/share/nginx/html/
