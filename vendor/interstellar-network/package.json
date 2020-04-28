@@ -1,0 +1,25 @@
+{
+  "name": "interstellar-network",
+  "version": "0.0.12",
+  "description": "The interstellar-network module provides communication layer between Interstellar application and Stellar network.",
+  "keywords": [
+    "stellar",
+    "interstellar"
+  ],
+  "scripts": {
+    "test": "gulp test",
+    "postversion": "git push && git push --tags"
+  },
+  "author": "Stellar Development Foundation <stellar@stellar.org>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/stellar/interstellar-network.git"
+  },
+  "dependencies": {
+    "stellar-sdk": "~0.6.0",
+    "lodash": "^2.4.1",
+    "interstellar-core": "~0.0.3",
+    "bluebird": "^2.9.25"
+  }
+}
