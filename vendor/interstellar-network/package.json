@@ -17,7 +17,7 @@
     "url": "http://github.com/stellar/interstellar-network.git"
   },
   "dependencies": {
-    "stellar-sdk": "~0.6.0",
+    "stellar-sdk": "*",
     "lodash": "^2.4.1",
     "interstellar-core": "~0.0.3",
     "bluebird": "^2.9.25"
