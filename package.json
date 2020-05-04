@@ -27,7 +27,7 @@
     "interstellar-ui-messages": "~0.0.3",
     "lodash": "^4.17.13",
     "regenerator-runtime": "^0.13.3",
-    "stellar-sdk": "^2.0.1",
+    "stellar-sdk": "^5.0.0",
     "u2f-api": "^1.1.1"
   },
   "devDependencies": {

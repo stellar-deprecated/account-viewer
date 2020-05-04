@@ -30,8 +30,6 @@ export default class SendWidgetController {
       return;
     }
 
-    Network.use(new Network(Config.get('modules.interstellar-network.networkPassphrase')));
-
     this.view = 'sendSetup';
     this.$scope = $scope;
     this.$rootScope = $rootScope;
@@ -444,8 +442,11 @@ export default class SendWidgetController {
 
     var transaction = new Transaction(this.lastTransactionXDR);
 
-    return this.Server.submitTransaction(transaction)
-      .then(this._submitOnSuccess.bind(this))
+    return this.Server.submitTransaction(transaction, {
+      networkPassphrase: new Network(
+        Config.get('modules.interstellar-network.networkPassphrase')
+      )
+    }).then(this._submitOnSuccess.bind(this))
       .catch(this._submitOnFailure.bind(this))
       .finally(this._submitFinally.bind(this));
   }
