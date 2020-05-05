@@ -2,7 +2,7 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import {Widget, Inject, Intent} from 'interstellar-core';
 import {Alert, AlertGroup} from 'interstellar-ui-messages';
-import {Account, Asset, Keypair, Memo, Network, Operation, Server, StrKey, TimeoutInfinite, Transaction, TransactionBuilder, xdr} from 'stellar-sdk';
+import { Asset, Keypair, Memo, Operation, Server, StrKey, TimeoutInfinite, Transaction, TransactionBuilder, xdr, AccountRequiresMemoError} from 'stellar-sdk';
 import {FederationServer} from 'stellar-sdk';
 import BasicClientError from '../errors';
 import knownAccounts from '../known_accounts';
@@ -45,6 +45,7 @@ export default class SendWidgetController {
     this.minimumFee = stroopsToLumens(100);
     this.fee = this.minimumFee;
     this.recommendedFee = this.minimumFee;
+    this.networkPassphrase = Config.get('modules.interstellar-network.networkPassphrase')
     this.networkCongestion = null;
     // Resolved destination (accountId/address)
     this.destination = null;
@@ -442,11 +443,8 @@ export default class SendWidgetController {
 
     var transaction = new Transaction(this.lastTransactionXDR);
 
-    return this.Server.submitTransaction(transaction, {
-      networkPassphrase: new Network(
-        Config.get('modules.interstellar-network.networkPassphrase')
-      )
-    }).then(this._submitOnSuccess.bind(this))
+    return this.Server.submitTransaction(transaction)
+      .then(this._submitOnSuccess.bind(this))
       .catch(this._submitOnFailure.bind(this))
       .finally(this._submitFinally.bind(this));
   }
@@ -478,7 +476,10 @@ export default class SendWidgetController {
           timeout = TimeoutInfinite;
         }
 
-        let transaction = new TransactionBuilder(this.session.getAccount(), {fee: lumensToStroops(this.fee)})
+        let transaction = new TransactionBuilder(this.session.getAccount(), {
+          networkPassphrase: this.networkPassphrase,
+          fee: lumensToStroops(this.fee)
+        })
           .addOperation(operation)
           .addMemo(memo)
           .setTimeout(timeout)
@@ -535,8 +536,8 @@ export default class SendWidgetController {
   }
 
   _submitOnFailure(e) {
-    this.success = false;
-    this.needsResubmit = false;
+    this.success = false
+    this.result = 'failed';
 
     if (this.ledgerError) {
       if (e.errorCode == 2) {
@@ -546,9 +547,11 @@ export default class SendWidgetController {
       } else {
         this.outcomeMessage = 'Unknown error: '+JSON.stringify(e);
       }
+    } else if (e instanceof AccountRequiresMemoError) {
+      this.result = 'requiredMemo'
     } else {
       if (e.title != "Transaction Failed" && e.title != "Transaction Malformed") {
-        this.needsResubmit = true;
+        this.result = 'needsResubmit'
       }
       this.outcomeMessage = JSON.stringify(e, null, '  ');
     }
