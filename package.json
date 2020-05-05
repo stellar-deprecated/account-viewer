@@ -22,12 +22,12 @@
     "bignumber.js": "^2.0.8",
     "interstellar": "https://github.com/stellar/interstellar.git#yarn",
     "interstellar-core": "~0.0.4",
-    "interstellar-network": "~0.0.12",
+    "interstellar-network": "./vendor/interstellar-network",
     "interstellar-sessions": "~0.0.10",
     "interstellar-ui-messages": "~0.0.3",
     "lodash": "^4.17.13",
     "regenerator-runtime": "^0.13.3",
-    "stellar-sdk": "^2.0.1",
+    "stellar-sdk": "^5.0.0",
     "u2f-api": "^1.1.1"
   },
   "devDependencies": {
