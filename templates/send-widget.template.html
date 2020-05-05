@@ -188,7 +188,7 @@ ng-class="widget.view == 'sendWaiting' ? 'sendPane--pending' : 'sendPane--idle'"
     </div>
 
     <button class="s-button sendOutcome__return" ng-if="widget.success || widget.result === 'failed'" ng-click="widget.showView($event, 'sendSetup')">Send another transaction</button>
-    <button class="s-button sendOutcome__return" ng-if="widget.result == 'requiredMemo'" ng-click="widget.showView($event, 'sendSetup')">Add a memo</button>
+    <button class="s-button sendOutcome__return" ng-if="!widget.success && widget.result == 'requiredMemo'" ng-click="widget.showView($event, 'sendSetup')">Add a memo</button>
   </div>
 
   <div class="additionalSigners" ng-if="widget.view === 'additionalSigners'">
