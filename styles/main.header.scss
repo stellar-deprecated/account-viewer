@@ -145,3 +145,18 @@ label.sendSetup__titleBar {
     font-size: inherit;
   }
 }
+
+.spacer {
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+}
+
+.terms {
+  padding: 4rem 0;
+
+  a {
+    color: #717577;
+    text-decoration: none;
+  }
+}
